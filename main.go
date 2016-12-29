@@ -60,7 +60,31 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		fmt.Println("it's mysql!")
 	} else if isPSQLService(serviceName, planName) {
 		fmt.Println("it's postgres!")
+	} else {
+		log.Fatalf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceName, planName)
 	}
+
+	serviceKeyID := generateServiceKeyID()
+	_, err = cliConnection.CliCommandWithoutTerminalOutput("create-service-key", serviceInstanceName, serviceKeyID)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer func() {
+		_, err := cliConnection.CliCommandWithoutTerminalOutput("delete-service-key", "-f", serviceInstanceName, serviceKeyID)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	output, err := cliConnection.CliCommandWithoutTerminalOutput("service-key", serviceInstanceName, serviceKeyID)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Println(strings.Join(output, "\n"))
+}
+
+func generateServiceKeyID() string {
+	return "DB_CONNECT"
 }
 
 func isMySQLService(serviceName, planName string) bool {
