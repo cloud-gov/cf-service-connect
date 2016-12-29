@@ -9,6 +9,8 @@ import (
 	"code.cloudfoundry.org/cli/plugin"
 	"encoding/json"
 	"net/url"
+	"os/exec"
+	"time"
 )
 
 const SUBCOMMAND = "connect-to-db"
@@ -58,13 +60,6 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 
 	serviceName := service.ServiceOffering.Name
 	planName := service.ServicePlan.Name
-	if isMySQLService(serviceName, planName) {
-		fmt.Println("it's mysql!")
-	} else if isPSQLService(serviceName, planName) {
-		fmt.Println("it's postgres!")
-	} else {
-		log.Fatalf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceName, planName)
-	}
 
 	serviceKeyID := generateServiceKeyID()
 	_, err = cliConnection.CliCommandWithoutTerminalOutput("create-service-key", serviceInstanceName, serviceKeyID)
@@ -89,9 +84,71 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Printf("%v\n", serviceKeyResponse)
+	serviceKeyCreds := serviceKeyResponse.Resources[0].Entity.Credentials
+	localPort := getAvailablePort()
+	cmd := exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
+	err = cmd.Start()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	time.Sleep(2* time.Second)
+	// TODO ensure it works with Ctrl-C (exit early signal)
+	// TODO wait a moment and check if command failed
+	if isMySQLService(serviceName, planName) {
+		startShell("", []string{})
+	} else if isPSQLService(serviceName, planName) {
+		os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
+		fmt.Println("Password:" + serviceKeyCreds.Password)
+		executable, err := exec.LookPath("psql")
+		if err != nil {
+			log.Fatalln(err)
+		}
+		startShell(executable, []string{executable, "-h", "localhost", "-p", fmt.Sprintf("%d",localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
+
+		// startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d",localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
+		fmt.Println("it's postgres!")
+	} else {
+		log.Fatalf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceName, planName)
+	}
+	if err := cmd.Process.Kill(); err != nil {
+		log.Println(err)
+	}
 }
 
+
+// derived from http://technosophos.com/2014/07/11/start-an-interactive-shell-from-within-go.html
+func startShell(cmd string, args []string) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	pa := os.ProcAttr {
+		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
+		Dir: cwd,
+	}
+
+	/*
+	executable, err := exec.LookPath(cmd)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	*/
+	//fmt.Println(executable)
+	fmt.Println(args)
+	fmt.Println(strings.Join(args, " "))
+	//proc, err := os.StartProcess(executable, append([]string{executable}, args...), &pa)
+	proc, err := os.StartProcess(cmd, args, &pa)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Wait until user exits the shell
+	_, err = proc.Wait()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Finished shell")
+}
 type ServiceKeyResponse struct {
 	Resources []ServiceKeyResource `json:"resources"`
 }
@@ -107,10 +164,13 @@ type Credentials struct {
 	Name     string `json:"name"`
 	Host     string `json:"host"`
 	Username string `json:"username"`
-	Password string `json:"passsword"`
+	Password string `json:"password"`
 	Port     string `json:"port"`
 }
 
+func getAvailablePort() int {
+	return 63306
+}
 func generateServiceKeyID() string {
 	return "DB_CONNECT"
 }
