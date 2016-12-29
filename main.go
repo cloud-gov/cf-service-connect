@@ -56,11 +56,28 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 
 	serviceName := service.ServiceOffering.Name
 	planName := service.ServicePlan.Name
-	if strings.Contains(serviceName, "mysql") || strings.Contains(planName, "mysql") {
+	if isMySQLService(serviceName, planName) {
 		fmt.Println("it's mysql!")
-	} else if strings.Contains(serviceName, "psql") || strings.Contains(serviceName, "postgres") || strings.Contains(planName, "psql") || strings.Contains(planName, "postgres") {
+	} else if isPSQLService(serviceName, planName) {
 		fmt.Println("it's postgres!")
 	}
+}
+
+func isMySQLService(serviceName, planName string) bool {
+	return isServiceType(serviceName, planName, "mysql")
+}
+
+func isPSQLService(serviceName, planName string) bool {
+	return isServiceType(serviceName, planName, "psql", "postgres")
+}
+
+func isServiceType(serviceName, planName string, items ...string) bool {
+	for _, item := range items {
+		if strings.Contains(serviceName, item) || strings.Contains(planName, item) {
+			return true
+		}
+	}
+	return false
 }
 
 // GetMetadata must be implemented as part of the plugin interface
