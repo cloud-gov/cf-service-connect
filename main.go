@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strings"
 
 	"code.cloudfoundry.org/cli/plugin"
 )
@@ -26,11 +28,36 @@ type DBConnectPlugin struct{}
 // user facing errors). The CLI will exit 0 if the plugin exits 0 and will exit
 // 1 should the plugin exits nonzero.
 func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string) {
+	// check to ensure it's the right subcommand, not others like CLI-MESSAGE-UNINSTALL
+	if args[0] != SUBCOMMAND {
+		return
+	}
+
 	if len(args) != 3 {
 		metadata := c.GetMetadata()
 		fmt.Println("Wrong number of arguments. Usage:")
 		fmt.Println(metadata.Commands[0].UsageDetails.Usage)
 		os.Exit(1)
+	}
+
+	appName := args[1]
+	// ensure the app exists
+	_, err := cliConnection.GetApp(appName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	serviceName := args[2]
+	// ensure the service instance exists
+	service, err := cliConnection.GetService(serviceName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if strings.Contains(service.ServicePlan.Name, "mysql") {
+		fmt.Println("it's mysql!")
+	} else if strings.Contains(service.ServicePlan.Name, "psql") {
+		fmt.Println("it's postgres!")
 	}
 }
 
