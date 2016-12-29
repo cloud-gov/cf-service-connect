@@ -1,0 +1,29 @@
+---
+platform: linux
+image: docker:///cloudfoundry/cli-ci
+
+inputs:
+- name: cli-ci
+- name: cf-cli-binaries
+- name: bosh-lite-lock
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -ex
+
+    export DOMAIN=$(cat bosh-lite-lock/name)
+    export API_ENDPOINT="https://api.${DOMAIN}"
+
+    export PATH=$GOPATH/bin:$PATH
+
+    pushd cf-cli-binaries
+      tar xvzf cf-cli-binaries.tgz
+      chmod +x cf-cli_linux_x86-64
+      mv cf-cli_linux_x86-64 $GOPATH/bin/cf
+    popd
+
+    cd cli-ci
+    CF_API=$API_ENDPOINT bin/cleanup-integration

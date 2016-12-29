@@ -1,0 +1,21 @@
+---
+platform: darwin
+image: docker:///cloudfoundry/cli-ci
+
+inputs:
+- name: cli
+  path: gopath/src/code.cloudfoundry.org/cli
+
+run:
+  path: bash
+  args:
+  - -c
+  - |
+    set -ex
+
+    export GOPATH=$PWD/gopath
+    export PATH=$GOPATH/bin:$PATH
+
+    cd $GOPATH/src/code.cloudfoundry.org/cli
+
+    bin/test -race
