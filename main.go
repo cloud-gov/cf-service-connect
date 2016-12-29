@@ -8,9 +8,9 @@ import (
 
 const SUBCOMMAND = "connect-to-db"
 
-// BasicPlugin is the struct implementing the interface defined by the core CLI. It can
+// DBConnectPlugin is the struct implementing the interface defined by the core CLI. It can
 // be found at  "code.cloudfoundry.org/cli/plugin/plugin.go"
-type BasicPlugin struct{}
+type DBConnectPlugin struct{}
 
 // Run must be implemented by any plugin because it is part of the
 // plugin interface defined by the core CLI.
@@ -24,10 +24,10 @@ type BasicPlugin struct{}
 // Any error handling should be handled with the plugin itself (this means printing
 // user facing errors). The CLI will exit 0 if the plugin exits 0 and will exit
 // 1 should the plugin exits nonzero.
-func (c *BasicPlugin) Run(cliConnection plugin.CliConnection, args []string) {
+func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string) {
 	// Ensure that we called the command basic-plugin-command
 	if args[0] == SUBCOMMAND {
-		fmt.Println("Running the basic-plugin-command")
+		fmt.Printf("Running the %s\n", SUBCOMMAND)
 	}
 }
 
@@ -43,7 +43,7 @@ func (c *BasicPlugin) Run(cliConnection plugin.CliConnection, args []string) {
 // defines the command `cf basic-plugin-command` once installed into the CLI. The
 // second field, HelpText, is used by the core CLI to display help information
 // to the user in the core commands `cf help`, `cf`, or `cf -h`.
-func (c *BasicPlugin) GetMetadata() plugin.PluginMetadata {
+func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
 		Name: "DBConnect",
 		Version: plugin.VersionType{
@@ -84,7 +84,7 @@ func main() {
 	// Note: The plugin's main() method is invoked at install time to collect
 	// metadata. The plugin will exit 0 and the Run([]string) method will not be
 	// invoked.
-	plugin.Start(new(BasicPlugin))
+	plugin.Start(new(DBConnectPlugin))
 	// Plugin code should be written in the Run([]string) method,
 	// ensuring the plugin environment is bootstrapped.
 }
