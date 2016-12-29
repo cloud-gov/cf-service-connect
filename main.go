@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"code.cloudfoundry.org/cli/plugin"
 )
@@ -25,9 +26,11 @@ type DBConnectPlugin struct{}
 // user facing errors). The CLI will exit 0 if the plugin exits 0 and will exit
 // 1 should the plugin exits nonzero.
 func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string) {
-	// Ensure that we called the command basic-plugin-command
-	if args[0] == SUBCOMMAND {
-		fmt.Printf("Running the %s\n", SUBCOMMAND)
+	if len(args) != 3 {
+		metadata := c.GetMetadata()
+		fmt.Println("Wrong number of arguments. Usage:")
+		fmt.Println(metadata.Commands[0].UsageDetails.Usage)
+		os.Exit(1)
 	}
 }
 
