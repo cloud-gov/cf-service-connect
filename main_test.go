@@ -2,12 +2,12 @@ package main
 
 import "testing"
 
-
 type isServiceTest struct {
 	serviceName string
-	planName string
-	result bool
+	planName    string
+	result      bool
 }
+
 func TestIsMySQLService(t *testing.T) {
 	tests := []isServiceTest{
 		{
