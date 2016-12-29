@@ -1,7 +1,7 @@
 hash: c95f5bf456f6fb9c7ff517a4df048f1fdb39ad9fe8cded8b5daaadfd45525142
 updated: 2016-12-29T11:58:12.484295299-05:00
 imports:
-- name: github.com/cloudfoundry/cli
+- name: code.cloudfoundry.org/cli
   version: v6.23.0
   subpackages:
   - plugin

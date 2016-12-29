@@ -1,5 +1,6 @@
 package: github.com/18F/cf-db-connect
 import:
-- package: github.com/cloudfoundry/cli
+- package: code.cloudfoundry.org/cli
+  repo: git@github.com:cloudfoundry/cli
   subpackages:
   - plugin
