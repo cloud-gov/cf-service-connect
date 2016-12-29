@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"code.cloudfoundry.org/cli/plugin"
+	"encoding/json"
+	"net/url"
 )
 
 const SUBCOMMAND = "connect-to-db"
@@ -76,11 +78,37 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		}
 	}()
 
-	output, err := cliConnection.CliCommandWithoutTerminalOutput("service-key", serviceInstanceName, serviceKeyID)
+	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", service.Guid, url.QueryEscape(serviceKeyID))
+	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(strings.Join(output, "\n"))
+	body := strings.Join(bodyLines, "")
+	serviceKeyResponse := ServiceKeyResponse{}
+	err = json.Unmarshal([]byte(body), &serviceKeyResponse)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Printf("%v\n", serviceKeyResponse)
+}
+
+type ServiceKeyResponse struct {
+	Resources []ServiceKeyResource `json:"resources"`
+}
+
+type ServiceKeyResource struct {
+	Entity struct {
+		Credentials Credentials `json:"credentials"`
+	} `json:"entity"`
+}
+
+type Credentials struct {
+	DBName   string `json:"db_name"`
+	Name     string `json:"name"`
+	Host     string `json:"host"`
+	Username string `json:"username"`
+	Password string `json:"passsword"`
+	Port     string `json:"port"`
 }
 
 func generateServiceKeyID() string {
