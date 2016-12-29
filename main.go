@@ -47,16 +47,18 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		log.Fatalln(err)
 	}
 
-	serviceName := args[2]
+	serviceInstanceName := args[2]
 	// ensure the service instance exists
-	service, err := cliConnection.GetService(serviceName)
+	service, err := cliConnection.GetService(serviceInstanceName)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	if strings.Contains(service.ServicePlan.Name, "mysql") {
+	serviceName := service.ServiceOffering.Name
+	planName := service.ServicePlan.Name
+	if strings.Contains(serviceName, "mysql") || strings.Contains(planName, "mysql") {
 		fmt.Println("it's mysql!")
-	} else if strings.Contains(service.ServicePlan.Name, "psql") {
+	} else if strings.Contains(serviceName, "psql") || strings.Contains(serviceName, "postgres") || strings.Contains(planName, "psql") || strings.Contains(planName, "postgres") {
 		fmt.Println("it's postgres!")
 	}
 }
