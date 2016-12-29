@@ -18,3 +18,9 @@ Setting up SSH tunnel...
 Initiating connection...
 mysql>
 ```
+
+## Development
+
+```sh
+./run.sh
+```
