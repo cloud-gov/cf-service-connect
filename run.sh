@@ -17,4 +17,4 @@ if cf plugins | grep -q "$NAME"; then
 fi
 cf install-plugin -f "$BIN"
 
-cf "$SUBCOMMAND" "$@"
+DEBUG=1 cf "$SUBCOMMAND" "$@"
