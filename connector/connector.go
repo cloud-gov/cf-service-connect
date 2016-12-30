@@ -2,8 +2,6 @@ package connector
 
 import (
 	"fmt"
-	"net/url"
-	"strings"
 
 	"github.com/18F/cf-db-connect/launcher"
 	"github.com/18F/cf-db-connect/models"
@@ -30,7 +28,7 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	}
 	defer serviceKey.Delete(cliConnection)
 
-	creds, err := getCreds(cliConnection, serviceInstance.GUID, serviceKey.ID)
+	creds, err := serviceKey.GetCreds(cliConnection)
 	if err != nil {
 		return
 	}
@@ -44,17 +42,5 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	defer tunnel.Close()
 
 	err = launcher.LaunchDBCLI(serviceInstance, tunnel, creds)
-	return
-}
-
-func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID string) (creds models.Credentials, err error) {
-	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", serviceGUID, url.QueryEscape(serviceKeyID))
-	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)
-	if err != nil {
-		return
-	}
-
-	body := strings.Join(bodyLines, "")
-	creds, err = models.CredentialsFromJSON(body)
 	return
 }
