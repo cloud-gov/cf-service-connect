@@ -31,11 +31,11 @@ func (t *SSHTunnel) Open() (err error) {
 	}()
 
 	// if the tunnel will fail to be created, it *should* be done in this time
-	time.Sleep(4 * time.Second)
+	time.Sleep(6 * time.Second)
 
 	select {
 	default:
-		// success!
+		// success (we hope)!
 	case e := <-errChan:
 		// SSH tunnel failed
 		if e == nil {
