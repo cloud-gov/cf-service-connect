@@ -27,16 +27,15 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		return
 	}
 
-	if len(args) != 3 {
+	if len(args) != 2 {
 		metadata := c.GetMetadata()
 		fmt.Println("Wrong number of arguments. Usage:")
 		fmt.Println(metadata.Commands[0].UsageDetails.Usage)
 		os.Exit(1)
 	}
 
-	appName := args[1]
-	serviceInstanceName := args[2]
-	err := connector.Connect(cliConnection, appName, serviceInstanceName)
+	serviceInstanceName := args[1]
+	err := connector.Connect(cliConnection, serviceInstanceName)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -60,7 +59,7 @@ func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
 				Name:     SUBCOMMAND,
 				HelpText: "Basic plugin command's help text",
 				UsageDetails: plugin.Usage{
-					Usage: SUBCOMMAND + "\n   cf " + SUBCOMMAND + " <app_name> <service_instance_name>",
+					Usage: SUBCOMMAND + "\n   cf " + SUBCOMMAND + " <service_instance_name>",
 				},
 			},
 		},
