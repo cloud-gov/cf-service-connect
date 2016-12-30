@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 
 	"encoding/json"
@@ -84,7 +85,11 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	// TODO ensure it works with Ctrl-C (exit early signal)
 
 	if isMySQLService(serviceName, planName) {
-		startShell("", []string{})
+		fmt.Println("Connecting to MySQL...")
+		err = launchMySQL(localPort, serviceKeyCreds)
+		if err != nil {
+			log.Fatalln(err)
+		}
 	} else if isPSQLService(serviceName, planName) {
 		fmt.Println("Connecting to Postgres...")
 		err = launchPSQL(localPort, serviceKeyCreds)
@@ -123,6 +128,11 @@ func createSSHTunnel(serviceKeyCreds Credentials, appName string) (localPort int
 	cmd = exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
 	err = cmd.Start()
 	return
+}
+
+func launchMySQL(localPort int, serviceKeyCreds Credentials) error {
+	fmt.Printf("%+v\n", serviceKeyCreds)
+	return startShell("mysql", []string{"-u", serviceKeyCreds.Username, "-h", "0", "-p" + serviceKeyCreds.Password, "-D", serviceKeyCreds.DBName, "-P", strconv.Itoa(localPort)})
 }
 
 func launchPSQL(localPort int, serviceKeyCreds Credentials) error {
