@@ -44,17 +44,11 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		os.Exit(1)
 	}
 
+	appName := args[1]
+	serviceInstanceName := args[2]
+
 	fmt.Println("Finding the service instance details...")
 
-	appName := args[1]
-	// ensure the app exists
-	_, err := cliConnection.GetApp(appName)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	serviceInstanceName := args[2]
-	// ensure the service instance exists
 	service, err := cliConnection.GetService(serviceInstanceName)
 	if err != nil {
 		log.Fatalln(err)
@@ -75,23 +69,13 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		}
 	}()
 
-	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", service.Guid, url.QueryEscape(serviceKeyID))
-	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)
+	serviceKeyCreds, err := getCreds(cliConnection, service.Guid, serviceKeyID)
 	if err != nil {
 		log.Fatalln(err)
 	}
-	body := strings.Join(bodyLines, "")
-	serviceKeyResponse := ServiceKeyResponse{}
-	err = json.Unmarshal([]byte(body), &serviceKeyResponse)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	serviceKeyCreds := serviceKeyResponse.Resources[0].Entity.Credentials
 
 	fmt.Println("Setting up SSH tunnel...")
-	localPort := getAvailablePort()
-	cmd := exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
-	err = cmd.Start()
+	localPort, cmd, err := createSSHTunnel(serviceKeyCreds, appName)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -103,9 +87,7 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		startShell("", []string{})
 	} else if isPSQLService(serviceName, planName) {
 		fmt.Println("Connecting to Postgres...")
-
-		os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
-		err = startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
+		err = launchPSQL(localPort, serviceKeyCreds)
 		if err != nil {
 			log.Fatalln(err)
 		}
@@ -117,6 +99,35 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	if err := cmd.Process.Kill(); err != nil {
 		log.Println(err)
 	}
+}
+
+func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID string) (creds Credentials, err error) {
+	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", serviceGUID, url.QueryEscape(serviceKeyID))
+	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)
+	if err != nil {
+		return
+	}
+	body := strings.Join(bodyLines, "")
+	serviceKeyResponse := ServiceKeyResponse{}
+	err = json.Unmarshal([]byte(body), &serviceKeyResponse)
+	if err != nil {
+		return
+	}
+
+	creds = serviceKeyResponse.Resources[0].Entity.Credentials
+	return
+}
+
+func createSSHTunnel(serviceKeyCreds Credentials, appName string) (localPort int, cmd *exec.Cmd, err error) {
+	localPort = getAvailablePort()
+	cmd = exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
+	err = cmd.Start()
+	return
+}
+
+func launchPSQL(localPort int, serviceKeyCreds Credentials) error {
+	os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
+	return startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
 }
 
 // derived from http://technosophos.com/2014/07/11/start-an-interactive-shell-from-within-go.html
