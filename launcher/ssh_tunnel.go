@@ -1,9 +1,11 @@
 package launcher
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/18F/cf-db-connect/models"
 )
@@ -18,8 +20,32 @@ type SSHTunnel struct {
 	cmd       *exec.Cmd
 }
 
-func (t *SSHTunnel) Open() error {
-	return t.cmd.Start()
+func (t *SSHTunnel) Open() (err error) {
+	// Start the (long-running) SSH tunnel command, and ensure that it doesn't fail. Because of how Process management in Go works, this needs to happen asynchronously.
+	// https://groups.google.com/d/msg/golang-nuts/XviHC3bJF8s/PUOYzcsmvwMJ
+
+	errChan := make(chan error)
+
+	go func() {
+		errChan <- t.cmd.Run()
+	}()
+
+	// if the tunnel will fail to be created, it *should* be done in this time
+	time.Sleep(4 * time.Second)
+
+	select {
+	default:
+		// success!
+	case e := <-errChan:
+		// SSH tunnel failed
+		if e == nil {
+			err = errors.New("SSH tunnel command exited early, without error")
+		} else {
+			err = e
+		}
+	}
+
+	return
 }
 
 func (t *SSHTunnel) Close() error {
