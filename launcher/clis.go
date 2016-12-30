@@ -24,21 +24,21 @@ func startShell(name string, args []string) error {
 func LaunchMySQL(localPort int, creds models.Credentials) error {
 	fmt.Printf("%+v\n", creds)
 	return startShell("mysql", []string{
-		"-u", creds.Username,
+		"-u", creds.GetUsername(),
 		"-h", "0",
-		"-p" + creds.Password,
-		"-D", creds.DBName,
+		"-p" + creds.GetPassword(),
+		"-D", creds.GetDBName(),
 		"-P", strconv.Itoa(localPort),
 	})
 }
 
 func LaunchPSQL(localPort int, creds models.Credentials) error {
-	os.Setenv("PGPASSWORD", creds.Password)
+	os.Setenv("PGPASSWORD", creds.GetPassword())
 	return startShell("psql", []string{
 		"-h", "localhost",
 		"-p", fmt.Sprintf("%d", localPort),
-		creds.DBName,
-		creds.Username,
+		creds.GetDBName(),
+		creds.GetUsername(),
 	})
 }
 
