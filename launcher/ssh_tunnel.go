@@ -8,11 +8,11 @@ import (
 	"time"
 
 	"github.com/18F/cf-db-connect/models"
+	"github.com/phayes/freeport"
 )
 
 func getAvailablePort() int {
-	// TODO find one that's available
-	return 63306
+	return freeport.GetPort()
 }
 
 type SSHTunnel struct {
