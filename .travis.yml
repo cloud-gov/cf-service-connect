@@ -1,4 +1,5 @@
 language: go
 go:
 - 1.x
+install: true
 script: go test -v $(go list ./... | grep -v /vendor/)
