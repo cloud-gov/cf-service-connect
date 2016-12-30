@@ -29,12 +29,7 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	if err != nil {
 		return
 	}
-	defer func() {
-		err := serviceKey.Delete(cliConnection)
-		if err != nil {
-			return
-		}
-	}()
+	defer serviceKey.Delete(cliConnection)
 
 	serviceKeyCreds, err := getCreds(cliConnection, serviceInstance.GUID, serviceKey.ID)
 	if err != nil {
@@ -47,6 +42,7 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	if err != nil {
 		return
 	}
+	defer tunnel.Close()
 	// TODO check if command failed
 
 	// TODO ensure it works with Ctrl-C (exit early signal)
@@ -69,8 +65,6 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 		return
 	}
 
-	// TODO defer
-	err = tunnel.Close()
 	return
 }
 
