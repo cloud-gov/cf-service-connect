@@ -1,14 +1,12 @@
 package launcher
 
 import (
-	"fmt"
-	"github.com/18F/cf-db-connect/utils"
-	"os"
+	"github.com/18F/cf-db-connect/logger"
 	"os/exec"
 	"strings"
 )
 
 func execute(name string, args ...string) *exec.Cmd {
-	utils.Debugf("%s %s\n", name, strings.Join(args, " "))
+	logger.Debugf("%s %s\n", name, strings.Join(args, " "))
 	return exec.Command(name, args...)
 }

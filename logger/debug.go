@@ -1,4 +1,4 @@
-package utils
+package logger
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 func Debugf(format string, args ...interface{}) {
-	if os.Getenv("DEBUG") {
+	if os.Getenv("DEBUG") != "" {
 		fmt.Printf(format, args...)
 	}
 }

@@ -6,8 +6,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/18F/cf-db-connect/logger"
 	"github.com/18F/cf-db-connect/models"
-	"github.com/18F/cf-db-connect/utils"
 )
 
 // derived from http://technosophos.com/2014/07/11/start-an-interactive-shell-from-within-go.html
@@ -22,7 +22,7 @@ func startShell(name string, args []string) error {
 }
 
 func LaunchMySQL(localPort int, creds models.Credentials) error {
-	utils.Debugf("%+v\n", creds)
+	logger.Debugf("%+v\n", creds)
 	return startShell("mysql", []string{
 		"-u", creds.GetUsername(),
 		"-h", "0",
@@ -34,7 +34,7 @@ func LaunchMySQL(localPort int, creds models.Credentials) error {
 
 func LaunchPSQL(localPort int, creds models.Credentials) error {
 	os.Setenv("PGPASSWORD", creds.GetPassword())
-	utils.Debugf("PGPASSWORD=%s ", creds.GetPassword())
+	logger.Debugf("PGPASSWORD=%s ", creds.GetPassword())
 
 	return startShell("psql", []string{
 		"-h", "localhost",
