@@ -34,10 +34,21 @@ func startShell(name string, args []string) error {
 
 func LaunchMySQL(localPort int, serviceKeyCreds models.Credentials) error {
 	fmt.Printf("%+v\n", serviceKeyCreds)
-	return startShell("mysql", []string{"-u", serviceKeyCreds.Username, "-h", "0", "-p" + serviceKeyCreds.Password, "-D", serviceKeyCreds.DBName, "-P", strconv.Itoa(localPort)})
+	return startShell("mysql", []string{
+		"-u", serviceKeyCreds.Username,
+		"-h", "0",
+		"-p" + serviceKeyCreds.Password,
+		"-D", serviceKeyCreds.DBName,
+		"-P", strconv.Itoa(localPort),
+	})
 }
 
 func LaunchPSQL(localPort int, serviceKeyCreds models.Credentials) error {
 	os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
-	return startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
+	return startShell("psql", []string{
+		"-h", "localhost",
+		"-p", fmt.Sprintf("%d", localPort),
+		serviceKeyCreds.DBName,
+		serviceKeyCreds.Username,
+	})
 }
