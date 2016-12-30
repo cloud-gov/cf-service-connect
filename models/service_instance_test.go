@@ -1,4 +1,4 @@
-package main
+package models
 
 import "testing"
 
@@ -32,7 +32,11 @@ func TestIsMySQLService(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		result := isMySQLService(test.serviceName, test.planName)
+		serviceInstance := ServiceInstance{
+			Service: test.serviceName,
+			Plan:    test.planName,
+		}
+		result := serviceInstance.IsMySQLService()
 		if result != test.result {
 			t.Errorf("Expected result %v. Real result %v. Data: Service Name '%s' Plan Name '%s'",
 				test.result, result, test.serviceName, test.planName)
@@ -74,7 +78,11 @@ func TestIsPSQLService(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		result := isPSQLService(test.serviceName, test.planName)
+		serviceInstance := ServiceInstance{
+			Service: test.serviceName,
+			Plan:    test.planName,
+		}
+		result := serviceInstance.IsPSQLService()
 		if result != test.result {
 			t.Errorf("Expected result %v. Real result %v. Data: Service Name '%s' Plan Name '%s'",
 				test.result, result, test.serviceName, test.planName)
