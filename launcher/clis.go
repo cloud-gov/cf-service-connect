@@ -22,7 +22,6 @@ func startShell(name string, args []string) error {
 }
 
 func LaunchMySQL(localPort int, creds models.Credentials) error {
-	logger.Debugf("%+v\n", creds)
 	return startShell("mysql", []string{
 		"-u", creds.GetUsername(),
 		"-h", "0",
