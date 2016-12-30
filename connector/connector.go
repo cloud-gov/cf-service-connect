@@ -1,7 +1,6 @@
 package connector
 
 import (
-	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -44,24 +43,7 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	}
 	defer tunnel.Close()
 
-	if serviceInstance.IsMySQLService() {
-		fmt.Println("Connecting to MySQL...")
-		err = launcher.LaunchMySQL(tunnel.LocalPort, creds)
-		if err != nil {
-			return
-		}
-	} else if serviceInstance.IsPSQLService() {
-		fmt.Println("Connecting to Postgres...")
-		err = launcher.LaunchPSQL(tunnel.LocalPort, creds)
-		if err != nil {
-			return
-		}
-	} else {
-		msg := fmt.Sprintf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceInstance.Service, serviceInstance.Plan)
-		err = errors.New(msg)
-		return
-	}
-
+	err = launcher.LaunchDBCLI(serviceInstance, tunnel, creds)
 	return
 }
 
