@@ -8,6 +8,7 @@ import (
 
 type ServiceInstance struct {
 	GUID    string
+	Name    string
 	Service string
 	Plan    string
 }

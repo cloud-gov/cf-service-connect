@@ -19,7 +19,7 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 		return
 	}
 
-	serviceKey := models.NewServiceKey(serviceInstanceName)
+	serviceKey := models.NewServiceKey(serviceInstance)
 
 	// clean up existing service key, if present
 	serviceKey.Delete(cliConnection)
