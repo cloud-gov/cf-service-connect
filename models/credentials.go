@@ -54,7 +54,7 @@ func (c credentialsJSON) GetUsername() string {
 }
 
 func (c credentialsJSON) GetPassword() string {
-	return c.GetPassword()
+	return c.Password
 }
 
 func (c credentialsJSON) GetPort() string {
