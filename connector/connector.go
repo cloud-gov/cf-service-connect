@@ -20,23 +20,23 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 		return
 	}
 
-	serviceKeyID := generateServiceKeyID()
+	serviceKey := models.NewServiceKey(serviceInstanceName)
 
 	// clean up existing service key, if present
-	deleteServiceKey(cliConnection, serviceInstanceName, serviceKeyID)
+	serviceKey.Delete(cliConnection)
 
-	_, err = cliConnection.CliCommandWithoutTerminalOutput("create-service-key", serviceInstanceName, serviceKeyID)
+	err = serviceKey.Create(cliConnection)
 	if err != nil {
 		return
 	}
 	defer func() {
-		err := deleteServiceKey(cliConnection, serviceInstanceName, serviceKeyID)
+		err := serviceKey.Delete(cliConnection)
 		if err != nil {
 			return
 		}
 	}()
 
-	serviceKeyCreds, err := getCreds(cliConnection, serviceInstance.GUID, serviceKeyID)
+	serviceKeyCreds, err := getCreds(cliConnection, serviceInstance.GUID, serviceKey.ID)
 	if err != nil {
 		return
 	}
@@ -73,11 +73,6 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	return
 }
 
-func deleteServiceKey(conn plugin.CliConnection, serviceInstanceName, serviceKeyID string) error {
-	_, err := conn.CliCommandWithoutTerminalOutput("delete-service-key", "-f", serviceInstanceName, serviceKeyID)
-	return err
-}
-
 func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID string) (creds models.Credentials, err error) {
 	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", serviceGUID, url.QueryEscape(serviceKeyID))
 	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)
@@ -88,9 +83,4 @@ func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID stri
 	body := strings.Join(bodyLines, "")
 	creds, err = models.CredentialsFromJSON(body)
 	return
-}
-
-func generateServiceKeyID() string {
-	// TODO find one that's available, or randomize
-	return "DB_CONNECT"
 }
