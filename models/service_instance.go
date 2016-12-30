@@ -36,12 +36,11 @@ func FetchServiceInstance(cliConnection plugin.CliConnection, name string) (si S
 		return
 	}
 
-	// serviceName := service.ServiceOffering.Name
-	// planName := service.ServicePlan.Name
 	si = ServiceInstance{
 		GUID:    srv.Guid,
 		Service: srv.ServiceOffering.Name,
 		Plan:    srv.ServicePlan.Name,
+		Name:    name,
 	}
 	return
 }
