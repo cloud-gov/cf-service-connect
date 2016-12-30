@@ -2,5 +2,7 @@ package: github.com/18F/cf-db-connect
 import:
 - package: code.cloudfoundry.org/cli
   repo: git@github.com:cloudfoundry/cli
+  version: v6.x.x
   subpackages:
   - plugin
+- package: github.com/phayes/freeport

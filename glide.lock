@@ -1,8 +1,12 @@
-hash: c95f5bf456f6fb9c7ff517a4df048f1fdb39ad9fe8cded8b5daaadfd45525142
-updated: 2016-12-29T11:58:12.484295299-05:00
+hash: d66cc244edaebf002cf00c3e11ed3af3dfec69f0b835e278a15a77fa97eee1ab
+updated: 2016-12-30T02:49:34.574932058-05:00
 imports:
 - name: code.cloudfoundry.org/cli
-  version: v6.23.0
+  version: c7866be180e8820fad4f36445f4c26c32ac05182
+  repo: git@github.com:cloudfoundry/cli
   subpackages:
   - plugin
+  - plugin/models
+- name: github.com/phayes/freeport
+  version: e7681b37614941bf73b404e0caa37f19e33b5fed
 testImports: []
