@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"net/url"
 	"os/exec"
-	"time"
 
 	"code.cloudfoundry.org/cli/plugin"
 )
@@ -44,6 +43,8 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		fmt.Println(metadata.Commands[0].UsageDetails.Usage)
 		os.Exit(1)
 	}
+
+	fmt.Println("Finding the service instance details...")
 
 	appName := args[1]
 	// ensure the app exists
@@ -86,13 +87,14 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		log.Fatalln(err)
 	}
 	serviceKeyCreds := serviceKeyResponse.Resources[0].Entity.Credentials
+
+	fmt.Println("Setting up SSH tunnel...")
 	localPort := getAvailablePort()
 	cmd := exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
 	err = cmd.Start()
 	if err != nil {
 		log.Fatalln(err)
 	}
-	time.Sleep(2 * time.Second)
 	// TODO check if command failed
 
 	// TODO ensure it works with Ctrl-C (exit early signal)
@@ -100,6 +102,8 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	if isMySQLService(serviceName, planName) {
 		startShell("", []string{})
 	} else if isPSQLService(serviceName, planName) {
+		fmt.Println("Connecting to Postgres...")
+
 		os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
 		err = startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
 		if err != nil {
