@@ -2,6 +2,7 @@ package launcher
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 
 	"github.com/18F/cf-db-connect/models"
@@ -27,7 +28,11 @@ func (t *SSHTunnel) Close() error {
 
 func NewSSHTunnel(serviceKeyCreds models.Credentials, appName string) SSHTunnel {
 	localPort := getAvailablePort()
+
 	cmd := exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
+	// should only print in the case of an issue
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	return SSHTunnel{
 		LocalPort: localPort,
