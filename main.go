@@ -4,14 +4,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
-	"strings"
 
-	"net/url"
-	"os/exec"
+	"github.com/18F/cf-db-connect/connector"
 
 	"code.cloudfoundry.org/cli/plugin"
-	"github.com/18F/cf-db-connect/models"
 )
 
 const SUBCOMMAND = "connect-to-db"
@@ -47,129 +43,10 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 
 	appName := args[1]
 	serviceInstanceName := args[2]
-
-	fmt.Println("Finding the service instance details...")
-
-	service, err := cliConnection.GetService(serviceInstanceName)
+	err := connector.Connect(cliConnection, appName, serviceInstanceName)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
-	serviceName := service.ServiceOffering.Name
-	planName := service.ServicePlan.Name
-
-	serviceKeyID := generateServiceKeyID()
-	_, err = cliConnection.CliCommandWithoutTerminalOutput("create-service-key", serviceInstanceName, serviceKeyID)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer func() {
-		_, err := cliConnection.CliCommandWithoutTerminalOutput("delete-service-key", "-f", serviceInstanceName, serviceKeyID)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}()
-
-	serviceKeyCreds, err := getCreds(cliConnection, service.Guid, serviceKeyID)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	fmt.Println("Setting up SSH tunnel...")
-	localPort, cmd, err := createSSHTunnel(serviceKeyCreds, appName)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// TODO check if command failed
-
-	// TODO ensure it works with Ctrl-C (exit early signal)
-
-	if isMySQLService(serviceName, planName) {
-		fmt.Println("Connecting to MySQL...")
-		err = launchMySQL(localPort, serviceKeyCreds)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	} else if isPSQLService(serviceName, planName) {
-		fmt.Println("Connecting to Postgres...")
-		err = launchPSQL(localPort, serviceKeyCreds)
-		if err != nil {
-			log.Fatalln(err)
-		}
-	} else {
-		log.Fatalf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceName, planName)
-	}
-
-	// TODO defer
-	if err := cmd.Process.Kill(); err != nil {
-		log.Println(err)
-	}
-}
-
-func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID string) (creds models.Credentials, err error) {
-	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", serviceGUID, url.QueryEscape(serviceKeyID))
-	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)
-	if err != nil {
-		return
-	}
-
-	body := strings.Join(bodyLines, "")
-	creds, err = models.CredentialsFromJSON(body)
-	return
-}
-
-func createSSHTunnel(serviceKeyCreds models.Credentials, appName string) (localPort int, cmd *exec.Cmd, err error) {
-	localPort = getAvailablePort()
-	cmd = exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
-	err = cmd.Start()
-	return
-}
-
-func launchMySQL(localPort int, serviceKeyCreds models.Credentials) error {
-	fmt.Printf("%+v\n", serviceKeyCreds)
-	return startShell("mysql", []string{"-u", serviceKeyCreds.Username, "-h", "0", "-p" + serviceKeyCreds.Password, "-D", serviceKeyCreds.DBName, "-P", strconv.Itoa(localPort)})
-}
-
-func launchPSQL(localPort int, serviceKeyCreds models.Credentials) error {
-	os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
-	return startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
-}
-
-// derived from http://technosophos.com/2014/07/11/start-an-interactive-shell-from-within-go.html
-func startShell(name string, args []string) error {
-	cmd := exec.Command(name, args...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	// Wait until user exits the shell
-	return cmd.Run()
-}
-
-func getAvailablePort() int {
-	// TODO find one that's available
-	return 63306
-}
-func generateServiceKeyID() string {
-	// TODO find one that's available, or randomize
-	return "DB_CONNECT"
-}
-
-func isMySQLService(serviceName, planName string) bool {
-	return isServiceType(serviceName, planName, "mysql")
-}
-
-func isPSQLService(serviceName, planName string) bool {
-	return isServiceType(serviceName, planName, "psql", "postgres")
-}
-
-func isServiceType(serviceName, planName string, items ...string) bool {
-	for _, item := range items {
-		if strings.Contains(serviceName, item) || strings.Contains(planName, item) {
-			return true
-		}
-	}
-	return false
 }
 
 // GetMetadata must be implemented as part of the plugin interface
