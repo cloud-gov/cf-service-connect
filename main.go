@@ -52,7 +52,7 @@ func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
 		},
 		MinCliVersion: plugin.VersionType{
 			Major: 6,
-			Minor: 7,
+			Minor: 15,
 			Build: 0,
 		},
 		Commands: []plugin.Command{
