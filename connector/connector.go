@@ -15,13 +15,10 @@ import (
 func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName string) (err error) {
 	fmt.Println("Finding the service instance details...")
 
-	service, err := cliConnection.GetService(serviceInstanceName)
+	serviceInstance, err := models.FetchServiceInstance(cliConnection, serviceInstanceName)
 	if err != nil {
 		return
 	}
-
-	serviceName := service.ServiceOffering.Name
-	planName := service.ServicePlan.Name
 
 	serviceKeyID := generateServiceKeyID()
 
@@ -39,7 +36,7 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 		}
 	}()
 
-	serviceKeyCreds, err := getCreds(cliConnection, service.Guid, serviceKeyID)
+	serviceKeyCreds, err := getCreds(cliConnection, serviceInstance.GUID, serviceKeyID)
 	if err != nil {
 		return
 	}
@@ -53,20 +50,21 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 
 	// TODO ensure it works with Ctrl-C (exit early signal)
 
-	if isMySQLService(serviceName, planName) {
+	if isMySQLService(serviceInstance) {
 		fmt.Println("Connecting to MySQL...")
 		err = launcher.LaunchMySQL(localPort, serviceKeyCreds)
 		if err != nil {
 			return
 		}
-	} else if isPSQLService(serviceName, planName) {
+	} else if isPSQLService(serviceInstance) {
 		fmt.Println("Connecting to Postgres...")
 		err = launcher.LaunchPSQL(localPort, serviceKeyCreds)
 		if err != nil {
 			return
 		}
 	} else {
-		err = errors.New(fmt.Sprintf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceName, planName))
+		msg := fmt.Sprintf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceInstance.Service, serviceInstance.Plan)
+		err = errors.New(msg)
 		return
 	}
 
@@ -97,12 +95,12 @@ func generateServiceKeyID() string {
 	return "DB_CONNECT"
 }
 
-func isMySQLService(serviceName, planName string) bool {
-	return isServiceType(serviceName, planName, "mysql")
+func isMySQLService(si models.ServiceInstance) bool {
+	return isServiceType(si.Service, si.Plan, "mysql")
 }
 
-func isPSQLService(serviceName, planName string) bool {
-	return isServiceType(serviceName, planName, "psql", "postgres")
+func isPSQLService(si models.ServiceInstance) bool {
+	return isServiceType(si.Service, si.Plan, "psql", "postgres")
 }
 
 func isServiceType(serviceName, planName string, items ...string) bool {
