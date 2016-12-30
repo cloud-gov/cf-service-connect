@@ -43,9 +43,6 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 		return
 	}
 	defer tunnel.Close()
-	// TODO check if command failed
-
-	// TODO ensure it works with Ctrl-C (exit early signal)
 
 	if serviceInstance.IsMySQLService() {
 		fmt.Println("Connecting to MySQL...")
