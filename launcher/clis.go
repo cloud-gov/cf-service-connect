@@ -20,23 +20,23 @@ func startShell(name string, args []string) error {
 	return cmd.Run()
 }
 
-func LaunchMySQL(localPort int, serviceKeyCreds models.Credentials) error {
-	fmt.Printf("%+v\n", serviceKeyCreds)
+func LaunchMySQL(localPort int, creds models.Credentials) error {
+	fmt.Printf("%+v\n", creds)
 	return startShell("mysql", []string{
-		"-u", serviceKeyCreds.Username,
+		"-u", creds.Username,
 		"-h", "0",
-		"-p" + serviceKeyCreds.Password,
-		"-D", serviceKeyCreds.DBName,
+		"-p" + creds.Password,
+		"-D", creds.DBName,
 		"-P", strconv.Itoa(localPort),
 	})
 }
 
-func LaunchPSQL(localPort int, serviceKeyCreds models.Credentials) error {
-	os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
+func LaunchPSQL(localPort int, creds models.Credentials) error {
+	os.Setenv("PGPASSWORD", creds.Password)
 	return startShell("psql", []string{
 		"-h", "localhost",
 		"-p", fmt.Sprintf("%d", localPort),
-		serviceKeyCreds.DBName,
-		serviceKeyCreds.Username,
+		creds.DBName,
+		creds.Username,
 	})
 }

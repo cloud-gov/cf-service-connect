@@ -31,13 +31,13 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	}
 	defer serviceKey.Delete(cliConnection)
 
-	serviceKeyCreds, err := getCreds(cliConnection, serviceInstance.GUID, serviceKey.ID)
+	creds, err := getCreds(cliConnection, serviceInstance.GUID, serviceKey.ID)
 	if err != nil {
 		return
 	}
 
 	fmt.Println("Setting up SSH tunnel...")
-	tunnel := launcher.NewSSHTunnel(serviceKeyCreds, appName)
+	tunnel := launcher.NewSSHTunnel(creds, appName)
 	err = tunnel.Open()
 	if err != nil {
 		return
@@ -46,13 +46,13 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 
 	if serviceInstance.IsMySQLService() {
 		fmt.Println("Connecting to MySQL...")
-		err = launcher.LaunchMySQL(tunnel.LocalPort, serviceKeyCreds)
+		err = launcher.LaunchMySQL(tunnel.LocalPort, creds)
 		if err != nil {
 			return
 		}
 	} else if serviceInstance.IsPSQLService() {
 		fmt.Println("Connecting to Postgres...")
-		err = launcher.LaunchPSQL(tunnel.LocalPort, serviceKeyCreds)
+		err = launcher.LaunchPSQL(tunnel.LocalPort, creds)
 		if err != nil {
 			return
 		}
