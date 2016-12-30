@@ -101,44 +101,29 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		startShell("", []string{})
 	} else if isPSQLService(serviceName, planName) {
 		os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
-		fmt.Println("Password:" + serviceKeyCreds.Password)
-
-		startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
+		err = startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
+		if err != nil {
+			log.Fatalln(err)
+		}
 	} else {
 		log.Fatalf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceName, planName)
 	}
 
+	// TODO defer
 	if err := cmd.Process.Kill(); err != nil {
 		log.Println(err)
 	}
 }
 
 // derived from http://technosophos.com/2014/07/11/start-an-interactive-shell-from-within-go.html
-func startShell(cmd string, args []string) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		log.Fatalln(err)
-	}
-	pa := os.ProcAttr{
-		Files: []*os.File{os.Stdin, os.Stdout, os.Stderr},
-		Dir:   cwd,
-	}
-
-	executable, err := exec.LookPath("psql")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	proc, err := os.StartProcess(executable, append([]string{executable}, args...), &pa)
-	if err != nil {
-		log.Fatalln(err)
-	}
+func startShell(name string, args []string) error {
+	cmd := exec.Command(name, args...)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 
 	// Wait until user exits the shell
-	_, err = proc.Wait()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println("Finished shell")
+	return cmd.Run()
 }
 
 type ServiceKeyResponse struct {
