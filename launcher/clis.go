@@ -9,18 +9,6 @@ import (
 	"github.com/18F/cf-db-connect/models"
 )
 
-func getAvailablePort() int {
-	// TODO find one that's available
-	return 63306
-}
-
-func CreateSSHTunnel(serviceKeyCreds models.Credentials, appName string) (localPort int, cmd *exec.Cmd, err error) {
-	localPort = getAvailablePort()
-	cmd = exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
-	err = cmd.Start()
-	return
-}
-
 // derived from http://technosophos.com/2014/07/11/start-an-interactive-shell-from-within-go.html
 func startShell(name string, args []string) error {
 	cmd := exec.Command(name, args...)
