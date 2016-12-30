@@ -55,7 +55,7 @@ func (t *SSHTunnel) Close() error {
 func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
 	localPort := getAvailablePort()
 
-	cmd := execWithDebug(
+	cmd := execute(
 		"cf",
 		"ssh",
 		"-N",

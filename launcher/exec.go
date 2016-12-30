@@ -2,15 +2,13 @@ package launcher
 
 import (
 	"fmt"
+	"github.com/18F/cf-db-connect/utils"
 	"os"
 	"os/exec"
 	"strings"
 )
 
-func execWithDebug(name string, args ...string) *exec.Cmd {
-	if os.Getenv("DEBUG") != "" {
-		fmt.Printf("%s %s\n", name, strings.Join(args, " "))
-	}
-
+func execute(name string, args ...string) *exec.Cmd {
+	utils.Debugf("%s %s\n", name, strings.Join(args, " "))
 	return exec.Command(name, args...)
 }
