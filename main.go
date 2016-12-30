@@ -58,9 +58,9 @@ func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
 		Commands: []plugin.Command{
 			{
 				Name:     SUBCOMMAND,
-				HelpText: "Basic plugin command's help text",
+				HelpText: "Open a shell that's connected to a database service instance",
 				UsageDetails: plugin.Usage{
-					Usage: SUBCOMMAND + "\n   cf " + SUBCOMMAND + " <app_name> <service_instance_name>",
+					Usage: "\n   cf " + SUBCOMMAND + " <app_name> <service_instance_name>",
 				},
 			},
 		},

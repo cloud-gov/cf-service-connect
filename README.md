@@ -1,6 +1,9 @@
 # Cloud Foundry CLI Database Connection Plugin
 
-This plugin makes it easy to connect to your databases in Cloud Foundry from your local machine. This condenses the steps listed in [Accessing Services with SSH](https://docs.cloudfoundry.org/devguide/deploy-apps/ssh-services.html) to a single command. Requires Diego architecture with [SSH enabled](https://docs.cloudfoundry.org/running/config-ssh.html).
+This plugin makes it easy to connect to your databases in Cloud Foundry from your local machine. This condenses the steps listed in [Accessing Services with SSH](https://docs.cloudfoundry.org/devguide/deploy-apps/ssh-services.html) to a single command. Requires Diego architecture with [SSH enabled](https://docs.cloudfoundry.org/running/config-ssh.html). Currently supports (most) service brokers for the following:
+
+* MySQL
+* PostgreSQL
 
 ## Local installation
 
@@ -9,6 +12,9 @@ This plugin makes it easy to connect to your databases in Cloud Foundry from you
 1. Install `psql` or `mysql` (depending on which database you need to connect to).
 
 ## Usage
+
+* `app_name` is the name of the app in your space you want to tunnel through.
+* `service_instance_name` is the service instance you wish to connect to.
 
 ```
 $ cf target --organization <org> --space <space>
