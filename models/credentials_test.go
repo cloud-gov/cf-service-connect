@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const JSONWrap = `{
@@ -50,14 +52,9 @@ func TestCredentialsFromJSON(t *testing.T) {
 	for _, test := range tests {
 		fullJSON := fmt.Sprintf(JSONWrap, test.entityJSON)
 		creds, err := CredentialsFromJSON(fullJSON)
-		if err != nil {
-			t.Error(err)
-		}
-		if creds.GetHost() != test.expectedHost {
-			t.Errorf("Expected: %v. Actual: %v.", test.expectedHost, creds.GetHost())
-		}
-		if creds.GetDBName() != test.expectedDBName {
-			t.Errorf("Expected: %v. Actual: %v.", test.expectedDBName, creds.GetDBName())
-		}
+		assert.Nil(t, err)
+
+		assert.Equal(t, creds.GetHost(), test.expectedHost)
+		assert.Equal(t, creds.GetDBName(), test.expectedDBName)
 	}
 }

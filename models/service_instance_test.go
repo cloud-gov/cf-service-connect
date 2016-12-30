@@ -1,10 +1,11 @@
 package models
 
 import (
+	"testing"
+
 	"code.cloudfoundry.org/cli/plugin/models"
 	"code.cloudfoundry.org/cli/plugin/pluginfakes"
-	"reflect"
-	"testing"
+	"github.com/stretchr/testify/assert"
 )
 
 type isServiceTest struct {
@@ -42,10 +43,7 @@ func TestIsMySQLService(t *testing.T) {
 			Plan:    test.planName,
 		}
 		result := serviceInstance.IsMySQLService()
-		if result != test.result {
-			t.Errorf("Expected result %v. Real result %v. Data: Service Name '%s' Plan Name '%s'",
-				test.result, result, test.serviceName, test.planName)
-		}
+		assert.Equal(t, result, test.result)
 	}
 }
 
@@ -88,10 +86,7 @@ func TestIsPSQLService(t *testing.T) {
 			Plan:    test.planName,
 		}
 		result := serviceInstance.IsPSQLService()
-		if result != test.result {
-			t.Errorf("Expected result %v. Real result %v. Data: Service Name '%s' Plan Name '%s'",
-				test.result, result, test.serviceName, test.planName)
-		}
+		assert.Equal(t, result, test.result)
 	}
 }
 
@@ -130,11 +125,7 @@ func TestFetchServiceInstance(t *testing.T) {
 		fakeCliConnection := &pluginfakes.FakeCliConnection{}
 		fakeCliConnection.GetServiceReturns(test.serviceModel, test.getServiceError)
 		serviceInstance, err := FetchServiceInstance(fakeCliConnection, test.serviceName)
-		if !reflect.DeepEqual(serviceInstance, test.expectedServiceInstance) {
-			t.Errorf("Failed Service Instance Equality Check. Expected %+v. Actual %+v\n", test.expectedServiceInstance, serviceInstance)
-		}
-		if err != test.expectedError {
-			t.Errorf("Failed Returned Error Check. Expected %+v. Actual %+v\n", test.expectedError, err)
-		}
+		assert.Equal(t, serviceInstance, test.expectedServiceInstance)
+		assert.Equal(t, err, test.expectedError)
 	}
 }
