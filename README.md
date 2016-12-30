@@ -1,4 +1,4 @@
-# Cloud Foundry CLI Database Connection Plugin
+# Cloud Foundry CLI Database Connection Plugin [![Build Status](https://travis-ci.org/18F/cf-db-connect.svg?branch=master)](https://travis-ci.org/18F/cf-db-connect)
 
 This plugin makes it easy to connect to your databases in Cloud Foundry from your local machine. This condenses the steps listed in [Accessing Services with SSH](https://docs.cloudfoundry.org/devguide/deploy-apps/ssh-services.html) to a single command. Requires Diego architecture with [SSH enabled](https://docs.cloudfoundry.org/running/config-ssh.html). Currently supports (most) service brokers for the following:
 
