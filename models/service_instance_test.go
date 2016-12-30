@@ -1,10 +1,6 @@
-package connector
+package models
 
-import (
-	"testing"
-
-	"github.com/18F/cf-db-connect/models"
-)
+import "testing"
 
 type isServiceTest struct {
 	serviceName string
@@ -36,11 +32,11 @@ func TestIsMySQLService(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		serviceInstance := models.ServiceInstance{
+		serviceInstance := ServiceInstance{
 			Service: test.serviceName,
 			Plan:    test.planName,
 		}
-		result := isMySQLService(serviceInstance)
+		result := serviceInstance.IsMySQLService()
 		if result != test.result {
 			t.Errorf("Expected result %v. Real result %v. Data: Service Name '%s' Plan Name '%s'",
 				test.result, result, test.serviceName, test.planName)
@@ -82,11 +78,11 @@ func TestIsPSQLService(t *testing.T) {
 		},
 	}
 	for _, test := range tests {
-		serviceInstance := models.ServiceInstance{
+		serviceInstance := ServiceInstance{
 			Service: test.serviceName,
 			Plan:    test.planName,
 		}
-		result := isPSQLService(serviceInstance)
+		result := serviceInstance.IsPSQLService()
 		if result != test.result {
 			t.Errorf("Expected result %v. Real result %v. Data: Service Name '%s' Plan Name '%s'",
 				test.result, result, test.serviceName, test.planName)

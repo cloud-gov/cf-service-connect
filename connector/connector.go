@@ -50,13 +50,13 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 
 	// TODO ensure it works with Ctrl-C (exit early signal)
 
-	if isMySQLService(serviceInstance) {
+	if serviceInstance.IsMySQLService() {
 		fmt.Println("Connecting to MySQL...")
 		err = launcher.LaunchMySQL(localPort, serviceKeyCreds)
 		if err != nil {
 			return
 		}
-	} else if isPSQLService(serviceInstance) {
+	} else if serviceInstance.IsPSQLService() {
 		fmt.Println("Connecting to Postgres...")
 		err = launcher.LaunchPSQL(localPort, serviceKeyCreds)
 		if err != nil {
@@ -93,21 +93,4 @@ func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID stri
 func generateServiceKeyID() string {
 	// TODO find one that's available, or randomize
 	return "DB_CONNECT"
-}
-
-func isMySQLService(si models.ServiceInstance) bool {
-	return isServiceType(si.Service, si.Plan, "mysql")
-}
-
-func isPSQLService(si models.ServiceInstance) bool {
-	return isServiceType(si.Service, si.Plan, "psql", "postgres")
-}
-
-func isServiceType(serviceName, planName string, items ...string) bool {
-	for _, item := range items {
-		if strings.Contains(serviceName, item) || strings.Contains(planName, item) {
-			return true
-		}
-	}
-	return false
 }
