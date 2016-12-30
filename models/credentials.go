@@ -2,18 +2,26 @@ package models
 
 import "encoding/json"
 
-type ServiceKeyResponse struct {
-	Resources []ServiceKeyResource `json:"resources"`
+type serviceKeyResponse struct {
+	Resources []serviceKeyResource `json:"resources"`
 }
 
-type ServiceKeyResource struct {
+type serviceKeyResource struct {
 	Entity struct {
-		Credentials CredentialsJSON `json:"credentials"`
+		Credentials credentialsJSON `json:"credentials"`
 	} `json:"entity"`
 }
 
+type Credentials interface {
+	GetDBName() string
+	GetHost() string
+	GetUsername() string
+	GetPassword() string
+	GetPort() string
+}
+
 // http://stackoverflow.com/a/28035946/358804
-type CredentialsJSON struct {
+type credentialsJSON struct {
 	// these groups of fields should be interchangeable
 	DBName string `json:"db_name"`
 	Name   string `json:"name"`
@@ -27,43 +35,39 @@ type CredentialsJSON struct {
 	Port     string `json:"port"`
 }
 
-func (c *CredentialsJSON) GetDBName() string {
+func (c credentialsJSON) GetDBName() string {
 	if c.Name != "" {
 		return c.Name
 	}
 	return c.DBName
 }
 
-func (c *CredentialsJSON) GetHost() string {
+func (c credentialsJSON) GetHost() string {
 	if c.Host != "" {
 		return c.Host
 	}
 	return c.Hostname
 }
 
-type Credentials struct {
-	DBName   string
-	Host     string
-	Username string
-	Password string
-	Port     string
+func (c credentialsJSON) GetUsername() string {
+	return c.Username
+}
+
+func (c credentialsJSON) GetPassword() string {
+	return c.GetPassword()
+}
+
+func (c credentialsJSON) GetPort() string {
+	return c.Port
 }
 
 func CredentialsFromJSON(body string) (creds Credentials, err error) {
-	serviceKeyResponse := ServiceKeyResponse{}
+	serviceKeyResponse := serviceKeyResponse{}
 	err = json.Unmarshal([]byte(body), &serviceKeyResponse)
 	if err != nil {
 		return
 	}
-	jsonCreds := serviceKeyResponse.Resources[0].Entity.Credentials
-
-	creds = Credentials{
-		DBName:   jsonCreds.GetDBName(),
-		Host:     jsonCreds.GetHost(),
-		Username: jsonCreds.Username,
-		Password: jsonCreds.Password,
-		Port:     jsonCreds.Port,
-	}
+	creds = serviceKeyResponse.Resources[0].Entity.Credentials
 
 	return
 }

@@ -53,11 +53,11 @@ func TestCredentialsFromJSON(t *testing.T) {
 		if err != nil {
 			t.Error(err)
 		}
-		if creds.Host != test.expectedHost {
-			t.Errorf("Expected: %v. Actual: %v.", test.expectedHost, creds.Host)
+		if creds.GetHost() != test.expectedHost {
+			t.Errorf("Expected: %v. Actual: %v.", test.expectedHost, creds.GetHost())
 		}
-		if creds.DBName != test.expectedDBName {
-			t.Errorf("Expected: %v. Actual: %v.", test.expectedDBName, creds.DBName)
+		if creds.GetDBName() != test.expectedDBName {
+			t.Errorf("Expected: %v. Actual: %v.", test.expectedDBName, creds.GetDBName())
 		}
 	}
 }
