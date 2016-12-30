@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"strings"
 
-	"encoding/json"
 	"net/url"
 	"os/exec"
 
 	"code.cloudfoundry.org/cli/plugin"
+	"github.com/18F/cf-db-connect/models"
 )
 
 const SUBCOMMAND = "connect-to-db"
@@ -106,36 +106,31 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	}
 }
 
-func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID string) (creds Credentials, err error) {
+func getCreds(cliConnection plugin.CliConnection, serviceGUID, serviceKeyID string) (creds models.Credentials, err error) {
 	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", serviceGUID, url.QueryEscape(serviceKeyID))
 	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)
 	if err != nil {
 		return
 	}
-	body := strings.Join(bodyLines, "")
-	serviceKeyResponse := ServiceKeyResponse{}
-	err = json.Unmarshal([]byte(body), &serviceKeyResponse)
-	if err != nil {
-		return
-	}
 
-	creds = serviceKeyResponse.Resources[0].Entity.Credentials
+	body := strings.Join(bodyLines, "")
+	creds, err = models.CredentialsFromJSON(body)
 	return
 }
 
-func createSSHTunnel(serviceKeyCreds Credentials, appName string) (localPort int, cmd *exec.Cmd, err error) {
+func createSSHTunnel(serviceKeyCreds models.Credentials, appName string) (localPort int, cmd *exec.Cmd, err error) {
 	localPort = getAvailablePort()
 	cmd = exec.Command("cf", "ssh", "-N", "-L", fmt.Sprintf("%d:%s:%s", localPort, serviceKeyCreds.Host, serviceKeyCreds.Port), appName)
 	err = cmd.Start()
 	return
 }
 
-func launchMySQL(localPort int, serviceKeyCreds Credentials) error {
+func launchMySQL(localPort int, serviceKeyCreds models.Credentials) error {
 	fmt.Printf("%+v\n", serviceKeyCreds)
 	return startShell("mysql", []string{"-u", serviceKeyCreds.Username, "-h", "0", "-p" + serviceKeyCreds.Password, "-D", serviceKeyCreds.DBName, "-P", strconv.Itoa(localPort)})
 }
 
-func launchPSQL(localPort int, serviceKeyCreds Credentials) error {
+func launchPSQL(localPort int, serviceKeyCreds models.Credentials) error {
 	os.Setenv("PGPASSWORD", serviceKeyCreds.Password)
 	return startShell("psql", []string{"-h", "localhost", "-p", fmt.Sprintf("%d", localPort), serviceKeyCreds.DBName, serviceKeyCreds.Username})
 }
@@ -149,25 +144,6 @@ func startShell(name string, args []string) error {
 
 	// Wait until user exits the shell
 	return cmd.Run()
-}
-
-type ServiceKeyResponse struct {
-	Resources []ServiceKeyResource `json:"resources"`
-}
-
-type ServiceKeyResource struct {
-	Entity struct {
-		Credentials Credentials `json:"credentials"`
-	} `json:"entity"`
-}
-
-type Credentials struct {
-	DBName   string `json:"db_name"`
-	Name     string `json:"name"`
-	Host     string `json:"host"`
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Port     string `json:"port"`
 }
 
 func getAvailablePort() int {
