@@ -24,9 +24,3 @@ Setting up SSH tunnel...
 ...
 mysql>
 ```
-
-## Development
-
-```sh
-./run.sh
-```
