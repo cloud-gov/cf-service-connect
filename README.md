@@ -14,7 +14,7 @@ Doesn't run on Windows [yet](https://github.com/18F/cf-db-connect/issues/13).
 ## Local installation
 
 1. Install the Cloud Foundry CLI v6.15.0 or later.
-1. Install the plugin. [TODO]
+1. Download the appropriate binary from [the Releases page](https://github.com/18F/cf-db-connect/releases).
 1. Install `psql` or `mysql` (depending on which database you need to connect to).
 
 ## Usage
