@@ -28,11 +28,17 @@ type credentialsJSON struct {
 
 	Host     string `json:"host"`
 	Hostname string `json:"hostname"`
-	///////////////////////////////////////////////////
+	HostName string `json:"host_name"`
 
 	Username string `json:"username"`
+	UserName string `json:"user_name"`
+	User     string `json:"user"`
+
 	Password string `json:"password"`
-	Port     string `json:"port"`
+	Pass     string `json:"pass"`
+	///////////////////////////////////////////////////
+
+	Port string `json:"port"`
 }
 
 func (c credentialsJSON) GetDBName() string {
@@ -46,14 +52,26 @@ func (c credentialsJSON) GetHost() string {
 	if c.Host != "" {
 		return c.Host
 	}
+	if c.HostName != "" {
+		return c.HostName
+	}
 	return c.Hostname
 }
 
 func (c credentialsJSON) GetUsername() string {
-	return c.Username
+	if c.Username != "" {
+		return c.Username
+	}
+	if c.UserName != "" {
+		return c.UserName
+	}
+	return c.User
 }
 
 func (c credentialsJSON) GetPassword() string {
+	if c.Pass != "" {
+		return c.Pass
+	}
 	return c.Password
 }
 
