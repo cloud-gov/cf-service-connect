@@ -31,6 +31,12 @@ This will (re)install then run the plugin, all in one.
 ### Releasing
 
 1. Update `Version` in [`main.go`](main.go).
-1. Install and run [`gox`](https://github.com/mitchellh/gox).
+1. Install [`gox`](https://github.com/mitchellh/gox).
+1. Build for everything but Windows.
+
+    ```sh
+    gox -osarch='!windows/386 !windows/amd64'
+    ```
+
 1. Commit, tag, and push via Git.
 1. Upload the binaries to [the new Release](https://github.com/18F/cf-db-connect/releases).
