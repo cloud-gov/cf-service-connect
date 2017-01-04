@@ -1,12 +1,14 @@
 package connector
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"text/template"
 
 	"github.com/18F/cf-db-connect/launcher"
 	"github.com/18F/cf-db-connect/models"
+	"github.com/18F/cf-db-connect/service"
 
 	"code.cloudfoundry.org/cli/plugin"
 )
@@ -93,7 +95,15 @@ func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	defer tunnel.Close()
 
 	if options.ConnectClient {
-		err = launcher.LaunchDBCLI(serviceInstance, tunnel, creds)
+		srv, found := service.GetService(serviceInstance)
+		if found {
+			fmt.Println("Connecting client...")
+			srv.Launch(tunnel.LocalPort, creds)
+		} else {
+			msg := fmt.Sprintf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceInstance.Service, serviceInstance.Plan)
+			return errors.New(msg)
+		}
+
 		return
 	}
 

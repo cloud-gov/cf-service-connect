@@ -4,6 +4,7 @@ import "github.com/18F/cf-db-connect/models"
 
 type Service interface {
 	Match(si models.ServiceInstance) bool
+	Launch(localPort int, creds models.Credentials) error
 }
 
 var SERVICES = []Service{
