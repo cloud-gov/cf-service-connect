@@ -20,13 +20,13 @@ func TestGetService(t *testing.T) {
 			"psql",
 			"shared",
 			true,
-			PSQL{},
+			PSQL,
 		},
 		{
 			"mysql",
 			"shared",
 			true,
-			MySQL{},
+			MySQL,
 		},
 		{
 			"other",

@@ -7,13 +7,13 @@ import (
 	"github.com/18F/cf-db-connect/models"
 )
 
-type MySQL struct{}
+type mySQL struct{}
 
-func (p MySQL) Match(si models.ServiceInstance) bool {
+func (p mySQL) Match(si models.ServiceInstance) bool {
 	return si.ContainsTerms("mysql")
 }
 
-func (p MySQL) Launch(localPort int, creds models.Credentials) error {
+func (p mySQL) Launch(localPort int, creds models.Credentials) error {
 	return launcher.StartShell("mysql", []string{
 		"-u", creds.GetUsername(),
 		"-h", "0",
@@ -22,3 +22,6 @@ func (p MySQL) Launch(localPort int, creds models.Credentials) error {
 		"-P", strconv.Itoa(localPort),
 	})
 }
+
+// singleton
+var MySQL = mySQL{}

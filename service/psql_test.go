@@ -47,13 +47,12 @@ func TestPSQLMatch(t *testing.T) {
 		},
 	}
 
-	pSQL := PSQL{}
 	for _, test := range tests {
 		serviceInstance := models.ServiceInstance{
 			Service: test.serviceName,
 			Plan:    test.planName,
 		}
-		result := pSQL.Match(serviceInstance)
+		result := PSQL.Match(serviceInstance)
 		assert.Equal(t, result, test.expected)
 	}
 }

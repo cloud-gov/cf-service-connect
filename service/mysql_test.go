@@ -37,13 +37,12 @@ func TestMySQLMatch(t *testing.T) {
 		},
 	}
 
-	mySQL := MySQL{}
 	for _, test := range tests {
 		serviceInstance := models.ServiceInstance{
 			Service: test.serviceName,
 			Plan:    test.planName,
 		}
-		result := mySQL.Match(serviceInstance)
+		result := MySQL.Match(serviceInstance)
 		assert.Equal(t, result, test.expected)
 	}
 }

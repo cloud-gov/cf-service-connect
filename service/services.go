@@ -8,8 +8,8 @@ type Service interface {
 }
 
 var services = []Service{
-	MySQL{},
-	PSQL{},
+	MySQL,
+	PSQL,
 }
 
 func GetService(si models.ServiceInstance) (Service, bool) {

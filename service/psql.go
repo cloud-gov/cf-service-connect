@@ -9,13 +9,13 @@ import (
 	"github.com/18F/cf-db-connect/models"
 )
 
-type PSQL struct{}
+type pSQL struct{}
 
-func (p PSQL) Match(si models.ServiceInstance) bool {
+func (p pSQL) Match(si models.ServiceInstance) bool {
 	return si.ContainsTerms("psql", "postgres")
 }
 
-func (p PSQL) Launch(localPort int, creds models.Credentials) error {
+func (p pSQL) Launch(localPort int, creds models.Credentials) error {
 	os.Setenv("PGPASSWORD", creds.GetPassword())
 	logger.Debugf("PGPASSWORD=%s ", creds.GetPassword())
 
@@ -26,3 +26,6 @@ func (p PSQL) Launch(localPort int, creds models.Credentials) error {
 		creds.GetUsername(),
 	})
 }
+
+// singleton
+var PSQL = pSQL{}
