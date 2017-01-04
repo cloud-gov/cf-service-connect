@@ -17,8 +17,7 @@ type Options struct {
 	ConnectClient       bool
 }
 
-func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
-	rawTemplate := `Skipping call to client CLI. Connection information:
+const manualConnectInstructions = `Skipping call to client CLI. Connection information:
 
 Host: localhost
 Port: {{.Port}}
@@ -29,20 +28,22 @@ Name: {{.Name}}
 Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
 `
 
-	// http://julianyap.com/2013/09/23/using-anonymous-structs-to-pass-data-to-templates-in-golang.html
-	connectionData := struct {
-		Port int
-		User string
-		Pass string
-		Name string
-	}{
-		tunnel.LocalPort,
-		creds.GetUsername(),
-		creds.GetPassword(),
-		creds.GetDBName(),
+type localConnectionData struct {
+	Port int
+	User string
+	Pass string
+	Name string
+}
+
+func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
+	connectionData := localConnectionData{
+		Port: tunnel.LocalPort,
+		User: creds.GetUsername(),
+		Pass: creds.GetPassword(),
+		Name: creds.GetDBName(),
 	}
 
-	tmpl, err := template.New("").Parse(rawTemplate)
+	tmpl, err := template.New("").Parse(manualConnectInstructions)
 	if err != nil {
 		return
 	}
