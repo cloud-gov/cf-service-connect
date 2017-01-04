@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"errors"
+	"flag"
 	"log"
-	"os"
 
 	"github.com/18F/cf-db-connect/connector"
 
@@ -16,6 +16,29 @@ const SUBCOMMAND = "connect-to-db"
 // be found at  "code.cloudfoundry.org/cli/plugin/plugin.go"
 type DBConnectPlugin struct{}
 
+func (c *DBConnectPlugin) parseOptions(args []string) (options connector.Options, err error) {
+	metadata := c.GetMetadata()
+	command := metadata.Commands[0]
+	flags := flag.NewFlagSet(command.Name, flag.ExitOnError)
+
+	err = flags.Parse(args[1:])
+	if err != nil {
+		return
+	}
+
+	nonFlagArgs := flags.Args()
+	if len(nonFlagArgs) != 2 {
+		err = errors.New("Wrong number of arguments")
+		return
+	}
+
+	options = connector.Options{
+		AppName:             nonFlagArgs[0],
+		ServiceInstanceName: nonFlagArgs[1],
+	}
+	return
+}
+
 // Run is the entry point when the core CLI is invoking a command defined
 // by the plugin. The first parameter, plugin.CliConnection, is a struct that can
 // be used to invoke cli commands. The second paramter, args, is a slice of
@@ -27,16 +50,12 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 		return
 	}
 
-	if len(args) != 3 {
-		metadata := c.GetMetadata()
-		fmt.Println("Wrong number of arguments. Usage:")
-		fmt.Println(metadata.Commands[0].UsageDetails.Usage)
-		os.Exit(1)
+	opts, err := c.parseOptions(args)
+	if err != nil {
+		log.Fatalln(err)
 	}
 
-	appName := args[1]
-	serviceInstanceName := args[2]
-	err := connector.Connect(cliConnection, appName, serviceInstanceName)
+	err = connector.Connect(cliConnection, opts)
 	if err != nil {
 		log.Fatalln(err)
 	}

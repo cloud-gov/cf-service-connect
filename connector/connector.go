@@ -9,10 +9,15 @@ import (
 	"code.cloudfoundry.org/cli/plugin"
 )
 
-func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName string) (err error) {
+type Options struct {
+	AppName             string
+	ServiceInstanceName string
+}
+
+func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	fmt.Println("Finding the service instance details...")
 
-	serviceInstance, err := models.FetchServiceInstance(cliConnection, serviceInstanceName)
+	serviceInstance, err := models.FetchServiceInstance(cliConnection, options.ServiceInstanceName)
 	if err != nil {
 		return
 	}
@@ -34,7 +39,7 @@ func Connect(cliConnection plugin.CliConnection, appName, serviceInstanceName st
 	}
 
 	fmt.Println("Setting up SSH tunnel...")
-	tunnel := launcher.NewSSHTunnel(creds, appName)
+	tunnel := launcher.NewSSHTunnel(creds, options.AppName)
 	err = tunnel.Open()
 	if err != nil {
 		return
