@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/18F/cf-db-connect/connector"
+	"github.com/18F/cf-service-connect/connector"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +17,7 @@ type parseOptionsTest struct {
 func TestParseOptions(t *testing.T) {
 	tests := []parseOptionsTest{
 		{
-			"connect-to-db app service",
+			"connect-to-service app service",
 			false,
 			connector.Options{
 				"app",
@@ -26,7 +26,7 @@ func TestParseOptions(t *testing.T) {
 			},
 		},
 		{
-			"connect-to-db -no-client app service",
+			"connect-to-service -no-client app service",
 			false,
 			connector.Options{
 				"app",
@@ -35,13 +35,13 @@ func TestParseOptions(t *testing.T) {
 			},
 		},
 		{
-			"connect-to-db foo bar baz",
+			"connect-to-service foo bar baz",
 			true,
 			connector.Options{},
 		},
 	}
 
-	plugin := DBConnectPlugin{}
+	plugin := ServiceConnectPlugin{}
 	for _, test := range tests {
 		args := strings.Split(test.args, " ")
 		opts, err := plugin.parseOptions(args)

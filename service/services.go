@@ -1,6 +1,6 @@
 package service
 
-import "github.com/18F/cf-db-connect/models"
+import "github.com/18F/cf-service-connect/models"
 
 type Service interface {
 	Match(si models.ServiceInstance) bool

@@ -1,7 +1,7 @@
 package launcher
 
 import (
-	"github.com/18F/cf-db-connect/logger"
+	"github.com/18F/cf-service-connect/logger"
 	"os/exec"
 	"strings"
 )

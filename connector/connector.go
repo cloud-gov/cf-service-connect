@@ -5,9 +5,9 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/18F/cf-db-connect/launcher"
-	"github.com/18F/cf-db-connect/models"
-	"github.com/18F/cf-db-connect/service"
+	"github.com/18F/cf-service-connect/launcher"
+	"github.com/18F/cf-service-connect/models"
+	"github.com/18F/cf-service-connect/service"
 
 	"code.cloudfoundry.org/cli/plugin"
 )

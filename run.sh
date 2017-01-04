@@ -3,8 +3,8 @@
 set -e
 set -x
 
-NAME=DBConnect
-SUBCOMMAND=connect-to-db
+NAME=ServiceConnect
+SUBCOMMAND=connect-to-service
 
 # http://stackoverflow.com/a/1371283/358804
 BIN=${PWD##*/}

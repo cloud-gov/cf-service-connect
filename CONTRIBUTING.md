@@ -39,4 +39,4 @@ This will (re)install then run the plugin, all in one.
     ```
 
 1. Commit, tag, and push via Git.
-1. Upload the binaries to [the new Release](https://github.com/18F/cf-db-connect/releases).
+1. Upload the binaries to [the new Release](https://github.com/18F/cf-service-connect/releases).
