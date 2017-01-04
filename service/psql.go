@@ -12,7 +12,7 @@ import (
 type PSQL struct{}
 
 func (p PSQL) Match(si models.ServiceInstance) bool {
-	return si.IsPSQLService()
+	return si.ContainsTerms("psql", "postgres")
 }
 
 func (p PSQL) Launch(localPort int, creds models.Credentials) error {

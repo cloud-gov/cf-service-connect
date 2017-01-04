@@ -10,7 +10,7 @@ import (
 type MySQL struct{}
 
 func (p MySQL) Match(si models.ServiceInstance) bool {
-	return si.IsMySQLService()
+	return si.ContainsTerms("mysql")
 }
 
 func (p MySQL) Launch(localPort int, creds models.Credentials) error {

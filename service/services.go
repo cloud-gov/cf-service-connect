@@ -7,13 +7,13 @@ type Service interface {
 	Launch(localPort int, creds models.Credentials) error
 }
 
-var SERVICES = []Service{
+var services = []Service{
 	MySQL{},
 	PSQL{},
 }
 
 func GetService(si models.ServiceInstance) (Service, bool) {
-	for _, potentialService := range SERVICES {
+	for _, potentialService := range services {
 		if potentialService.Match(si) {
 			return potentialService, true
 		}
