@@ -18,16 +18,15 @@ func getAvailablePort() int {
 type SSHTunnel struct {
 	LocalPort int
 	cmd       *exec.Cmd
+	errChan   chan error
 }
 
 func (t *SSHTunnel) Open() (err error) {
 	// Start the (long-running) SSH tunnel command, and ensure that it doesn't fail. Because of how Process management in Go works, this needs to happen asynchronously.
 	// https://groups.google.com/d/msg/golang-nuts/XviHC3bJF8s/PUOYzcsmvwMJ
 
-	errChan := make(chan error)
-
 	go func() {
-		errChan <- t.cmd.Run()
+		t.errChan <- t.cmd.Run()
 	}()
 
 	// if the tunnel will fail to be created, it *should* be done in this time
@@ -36,7 +35,7 @@ func (t *SSHTunnel) Open() (err error) {
 	select {
 	default:
 		// success (we hope)!
-	case e := <-errChan:
+	case e := <-t.errChan:
 		// SSH tunnel failed
 		if e == nil {
 			err = errors.New("SSH tunnel command exited early, without error")
@@ -46,6 +45,10 @@ func (t *SSHTunnel) Open() (err error) {
 	}
 
 	return
+}
+
+func (t *SSHTunnel) Wait() error {
+	return <-t.errChan
 }
 
 func (t *SSHTunnel) Close() error {
@@ -69,5 +72,6 @@ func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
 	return SSHTunnel{
 		LocalPort: localPort,
 		cmd:       cmd,
+		errChan:   make(chan error),
 	}
 }

@@ -20,6 +20,8 @@ func (c *DBConnectPlugin) parseOptions(args []string) (options connector.Options
 	metadata := c.GetMetadata()
 	command := metadata.Commands[0]
 	flags := flag.NewFlagSet(command.Name, flag.ExitOnError)
+	option := "no-client"
+	noClient := flags.Bool(option, false, command.UsageDetails.Options[option])
 
 	err = flags.Parse(args[1:])
 	if err != nil {
@@ -35,6 +37,7 @@ func (c *DBConnectPlugin) parseOptions(args []string) (options connector.Options
 	options = connector.Options{
 		AppName:             nonFlagArgs[0],
 		ServiceInstanceName: nonFlagArgs[1],
+		ConnectClient:       !(*noClient),
 	}
 	return
 }
@@ -79,7 +82,10 @@ func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
 				Name:     SUBCOMMAND,
 				HelpText: "Open a shell that's connected to a database service instance",
 				UsageDetails: plugin.Usage{
-					Usage: "\n   cf " + SUBCOMMAND + " <app_name> <service_instance_name>",
+					Usage: "\n   cf " + SUBCOMMAND + " [-no-client] <app_name> <service_instance_name>",
+					Options: map[string]string{
+						"no-client": "If this param is passed, the CLI client for the service won't be started, and the connection information will be printed to the console. Useful for connecting to the service through a GUI.",
+					},
 				},
 			},
 		},
