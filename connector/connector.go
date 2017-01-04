@@ -60,6 +60,25 @@ func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err err
 	return
 }
 
+func handleClient(
+	options Options,
+	tunnel launcher.SSHTunnel,
+	si models.ServiceInstance,
+	creds models.Credentials,
+) error {
+	if options.ConnectClient {
+		srv, found := service.GetService(si)
+		if found {
+			fmt.Println("Connecting client...")
+			return srv.Launch(tunnel.LocalPort, creds)
+		}
+
+		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'. Falling back to `-no-client` behavior.\n", si.Service, si.Plan)
+	}
+
+	return manualConnect(tunnel, creds)
+}
+
 // Connect performs the primary action of the plugin: providing an SSH tunnel and launching the appropriate client, if desired.
 func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	fmt.Println("Finding the service instance details...")
@@ -93,17 +112,6 @@ func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	}
 	defer tunnel.Close()
 
-	if options.ConnectClient {
-		srv, found := service.GetService(serviceInstance)
-		if found {
-			fmt.Println("Connecting client...")
-			err = srv.Launch(tunnel.LocalPort, creds)
-			return
-		}
-
-		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'. Falling back to `-no-client` behavior.\n", serviceInstance.Service, serviceInstance.Plan)
-	}
-
-	err = manualConnect(tunnel, creds)
+	err = handleClient(options, tunnel, serviceInstance, creds)
 	return
 }
