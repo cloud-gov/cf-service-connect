@@ -15,12 +15,14 @@ func getAvailablePort() int {
 	return freeport.GetPort()
 }
 
+// SSHTunnel represents an underlying SSH tunnel process. The struct should be created via NewSSHTunnel().
 type SSHTunnel struct {
 	LocalPort int
 	cmd       *exec.Cmd
 	errChan   chan error
 }
 
+// Open starts the underlying SSH tunnel process.
 func (t *SSHTunnel) Open() (err error) {
 	// Start the (long-running) SSH tunnel command, and ensure that it doesn't fail. Because of how Process management in Go works, this needs to happen asynchronously.
 	// https://groups.google.com/d/msg/golang-nuts/XviHC3bJF8s/PUOYzcsmvwMJ
@@ -47,14 +49,17 @@ func (t *SSHTunnel) Open() (err error) {
 	return
 }
 
+// Wait will block until the SSH tunnel is closed, either intentionally or not.
 func (t *SSHTunnel) Wait() error {
 	return <-t.errChan
 }
 
+// Close will terminate the underlying SSH tunnel process.
 func (t *SSHTunnel) Close() error {
 	return t.cmd.Process.Kill()
 }
 
+// NewSSHTunnel prepares the underlying Cloud Foundry CLI process for creating an SSH tunnel to a service instance.
 func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
 	localPort := getAvailablePort()
 

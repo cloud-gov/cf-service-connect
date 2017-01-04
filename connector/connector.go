@@ -11,6 +11,7 @@ import (
 	"code.cloudfoundry.org/cli/plugin"
 )
 
+// Options are the structured representation of the command-line flags/arguments.
 type Options struct {
 	AppName             string
 	ServiceInstanceName string
@@ -58,6 +59,7 @@ func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err err
 	return
 }
 
+// Connect performs the primary action of the plugin: providing an SSH tunnel and launching the appropriate client, if desired.
 func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	fmt.Println("Finding the service instance details...")
 
@@ -93,10 +95,8 @@ func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	if options.ConnectClient {
 		err = launcher.LaunchDBCLI(serviceInstance, tunnel, creds)
 		return
-	} else {
-		err = manualConnect(tunnel, creds)
-		return
 	}
 
+	err = manualConnect(tunnel, creds)
 	return
 }
