@@ -1,7 +1,6 @@
 package connector
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"text/template"
@@ -98,13 +97,11 @@ func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 		srv, found := service.GetService(serviceInstance)
 		if found {
 			fmt.Println("Connecting client...")
-			srv.Launch(tunnel.LocalPort, creds)
-		} else {
-			msg := fmt.Sprintf("Unsupported service. Service Name '%s' Plan Name '%s'. File an issue at https://github.com/18F/cf-db-connect/issues/new", serviceInstance.Service, serviceInstance.Plan)
-			return errors.New(msg)
+			err = srv.Launch(tunnel.LocalPort, creds)
+			return
 		}
 
-		return
+		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'. Falling back to `-no-client` behavior.\n", serviceInstance.Service, serviceInstance.Plan)
 	}
 
 	err = manualConnect(tunnel, creds)
