@@ -13,15 +13,7 @@ type ServiceInstance struct {
 	Plan    string
 }
 
-func (si *ServiceInstance) IsMySQLService() bool {
-	return si.isServiceType("mysql")
-}
-
-func (si *ServiceInstance) IsPSQLService() bool {
-	return si.isServiceType("psql", "postgres")
-}
-
-func (si *ServiceInstance) isServiceType(items ...string) bool {
+func (si *ServiceInstance) ContainsTerms(items ...string) bool {
 	for _, item := range items {
 		if strings.Contains(si.Service, item) || strings.Contains(si.Plan, item) {
 			return true
