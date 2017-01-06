@@ -37,3 +37,7 @@ Setting up SSH tunnel...
 ...
 mysql>
 ```
+
+### Manual client connection
+
+If you're using a non-default client (such as a GUI), run with the `-no-client` option to set up your client connection on your own.
