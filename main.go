@@ -5,18 +5,18 @@ import (
 	"flag"
 	"log"
 
-	"github.com/18F/cf-db-connect/connector"
+	"github.com/18F/cf-service-connect/connector"
 
 	"code.cloudfoundry.org/cli/plugin"
 )
 
-const SUBCOMMAND = "connect-to-db"
+const subcommand = "connect-to-service"
 
-// DBConnectPlugin is the struct implementing the interface defined by the core CLI. It can
+// ServiceConnectPlugin is the struct implementing the interface defined by the core CLI. It can
 // be found at  "code.cloudfoundry.org/cli/plugin/plugin.go"
-type DBConnectPlugin struct{}
+type ServiceConnectPlugin struct{}
 
-func (c *DBConnectPlugin) parseOptions(args []string) (options connector.Options, err error) {
+func (c *ServiceConnectPlugin) parseOptions(args []string) (options connector.Options, err error) {
 	metadata := c.GetMetadata()
 	command := metadata.Commands[0]
 	flags := flag.NewFlagSet(command.Name, flag.ExitOnError)
@@ -47,9 +47,9 @@ func (c *DBConnectPlugin) parseOptions(args []string) (options connector.Options
 // be used to invoke cli commands. The second paramter, args, is a slice of
 // strings. args[0] will be the name of the command, and will be followed by
 // any additional arguments a cli user typed in.
-func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string) {
+func (c *ServiceConnectPlugin) Run(cliConnection plugin.CliConnection, args []string) {
 	// check to ensure it's the right subcommand, not others like CLI-MESSAGE-UNINSTALL
-	if args[0] != SUBCOMMAND {
+	if args[0] != subcommand {
 		return
 	}
 
@@ -64,9 +64,10 @@ func (c *DBConnectPlugin) Run(cliConnection plugin.CliConnection, args []string)
 	}
 }
 
-func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
+// GetMetadata returns the plugin information for the CLI to consume.
+func (c *ServiceConnectPlugin) GetMetadata() plugin.PluginMetadata {
 	return plugin.PluginMetadata{
-		Name: "DBConnect",
+		Name: "ServiceConnect",
 		Version: plugin.VersionType{
 			Major: 1,
 			Minor: 0,
@@ -79,10 +80,10 @@ func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
 		},
 		Commands: []plugin.Command{
 			{
-				Name:     SUBCOMMAND,
+				Name:     subcommand,
 				HelpText: "Open a shell that's connected to a database service instance",
 				UsageDetails: plugin.Usage{
-					Usage: "\n   cf " + SUBCOMMAND + " [-no-client] <app_name> <service_instance_name>",
+					Usage: "\n   cf " + subcommand + " [-no-client] <app_name> <service_instance_name>",
 					Options: map[string]string{
 						"no-client": "If this param is passed, the CLI client for the service won't be started, and the connection information will be printed to the console. Useful for connecting to the service through a GUI.",
 					},
@@ -93,5 +94,5 @@ func (c *DBConnectPlugin) GetMetadata() plugin.PluginMetadata {
 }
 
 func main() {
-	plugin.Start(new(DBConnectPlugin))
+	plugin.Start(new(ServiceConnectPlugin))
 }

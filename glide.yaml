@@ -1,4 +1,4 @@
-package: github.com/18F/cf-db-connect
+package: github.com/18F/cf-service-connect
 import:
 - package: code.cloudfoundry.org/cli
   version: v6.x.x

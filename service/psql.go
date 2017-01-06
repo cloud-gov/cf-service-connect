@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/18F/cf-db-connect/launcher"
-	"github.com/18F/cf-db-connect/logger"
-	"github.com/18F/cf-db-connect/models"
+	"github.com/18F/cf-service-connect/launcher"
+	"github.com/18F/cf-service-connect/logger"
+	"github.com/18F/cf-service-connect/models"
 )
 
 type pSQL struct{}

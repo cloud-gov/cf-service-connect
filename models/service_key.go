@@ -37,7 +37,7 @@ func (sk *ServiceKey) GetCreds(cliConnection plugin.CliConnection) (creds Creden
 
 func generateServiceKeyID() string {
 	// TODO find one that's available, or randomize
-	return "DB_CONNECT"
+	return "SERVICE_CONNECT"
 }
 
 func NewServiceKey(instance ServiceInstance) ServiceKey {
