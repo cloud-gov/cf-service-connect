@@ -17,3 +17,26 @@ the [CC0 1.0 Universal public domain dedication](https://creativecommons.org/pub
 All contributions to this project will be released under the CC0
 dedication. By submitting a pull request, you are agreeing to comply
 with this waiver of copyright interest.
+
+## Development
+
+Requires Golang. After modifying the source, run
+
+```sh
+./run.sh <app_name> <service_instance_name>
+```
+
+This will (re)install then run the plugin, all in one.
+
+### Releasing
+
+1. Update `Version` in [`main.go`](main.go).
+1. Install [`gox`](https://github.com/mitchellh/gox).
+1. Build for everything but Windows.
+
+    ```sh
+    gox -osarch='!windows/386 !windows/amd64'
+    ```
+
+1. Commit, tag, and push via Git.
+1. Upload the binaries to [the new Release](https://github.com/18F/cf-db-connect/releases).
