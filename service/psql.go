@@ -27,5 +27,5 @@ func (p pSQL) Launch(localPort int, creds models.Credentials) error {
 	})
 }
 
-// singleton
+// PSQL is the service singleton.
 var PSQL = pSQL{}

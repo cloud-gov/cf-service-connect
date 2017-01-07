@@ -36,7 +36,7 @@ func (t *SSHTunnel) Open() (err error) {
 
 	select {
 	default:
-		// success (we hope)!
+		fmt.Println("SSH tunnel created.") // we hope
 	case e := <-t.errChan:
 		// SSH tunnel failed
 		if e == nil {

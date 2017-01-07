@@ -6,8 +6,9 @@ This plugin makes it easy to connect to your databases or other Cloud Foundry se
 
 Currently supports (most) service brokers for the following:
 
-* MySQL
-* PostgreSQL
+* MySQL (requires `mysql` CLI)
+* PostgreSQL (requires `psql` CLI)
+* Redis (requires `redis-cli`)
 
 Doesn't run on Windows [yet](https://github.com/18F/cf-service-connect/issues/13).
 
@@ -22,7 +23,7 @@ Doesn't run on Windows [yet](https://github.com/18F/cf-service-connect/issues/13
     # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect_<os>_<arch>
     ```
 
-1. Install `psql` or `mysql` (depending on which you need to connect to).
+1. Install CLI corresponding to the service type (see above).
 
 ## Usage
 

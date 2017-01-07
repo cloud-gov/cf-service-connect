@@ -10,6 +10,7 @@ type Service interface {
 var services = []Service{
 	MySQL,
 	PSQL,
+	Redis,
 }
 
 func GetService(si models.ServiceInstance) (Service, bool) {
