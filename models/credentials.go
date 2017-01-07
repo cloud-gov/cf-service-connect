@@ -24,6 +24,7 @@ type Credentials interface {
 type credentialsJSON struct {
 	// these groups of fields should be interchangeable
 	DBName string `json:"db_name"`
+	Dbname string `json:"dbname"`
 	Name   string `json:"name"`
 
 	Host     string `json:"host"`
@@ -44,6 +45,9 @@ type credentialsJSON struct {
 func (c credentialsJSON) GetDBName() string {
 	if c.Name != "" {
 		return c.Name
+	}
+	if c.Dbname != "" {
+		return c.Dbname
 	}
 	return c.DBName
 }
