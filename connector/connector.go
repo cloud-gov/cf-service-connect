@@ -70,10 +70,18 @@ func handleClient(
 		srv, found := service.GetService(si)
 		if found {
 			fmt.Println("Connecting client...")
-			return srv.Launch(tunnel.LocalPort, creds)
+			err := srv.Launch(tunnel.LocalPort, creds)
+			if err == nil {
+				// exited cleanly
+				return nil
+			}
+			fmt.Println("Unable to launch client CLI:")
+			fmt.Println(err)
+		} else {
+			fmt.Printf("Unable to find matching client for service '%s' with plan '%s'.\n", si.Service, si.Plan)
 		}
 
-		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'. Falling back to `-no-client` behavior.\n", si.Service, si.Plan)
+		fmt.Println("Falling back to `-no-client` behavior.")
 	}
 
 	return manualConnect(tunnel, creds)
