@@ -19,7 +19,7 @@ Doesn't run on Windows [yet](https://github.com/18F/cf-service-connect/issues/13
     ```sh
     cf install-plugin <binary_url>
     # will be of the format
-    # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect_<os>_<arch>
+    # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect.<os>
     ```
 
 1. Install `psql` or `mysql` (depending on which you need to connect to).
