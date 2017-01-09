@@ -9,6 +9,7 @@ Currently supports (most) service brokers for the following:
 * MongoDB (requires `mongo` Shell)
 * MySQL (requires `mysql` CLI)
 * PostgreSQL (requires `psql` CLI)
+* Redis (requires `redis-cli`)
 
 Doesn't run on Windows [yet](https://github.com/18F/cf-service-connect/issues/13).
 
@@ -20,7 +21,7 @@ Doesn't run on Windows [yet](https://github.com/18F/cf-service-connect/issues/13
     ```sh
     cf install-plugin <binary_url>
     # will be of the format
-    # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect_<os>_<arch>
+    # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect.<os>
     ```
 
 1. Install CLI corresponding to the service type (see above).

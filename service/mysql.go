@@ -23,5 +23,5 @@ func (p mySQL) Launch(localPort int, creds models.Credentials) error {
 	})
 }
 
-// singleton
+// MySQL is the service singleton.
 var MySQL = mySQL{}
