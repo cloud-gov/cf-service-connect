@@ -6,6 +6,7 @@ This plugin makes it easy to connect to your databases or other Cloud Foundry se
 
 Currently supports (most) service brokers for the following:
 
+* MongoDB (requires `mongo` Shell)
 * MySQL (requires `mysql` CLI)
 * PostgreSQL (requires `psql` CLI)
 * Redis (requires `redis-cli`)

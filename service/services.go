@@ -8,6 +8,7 @@ type Service interface {
 }
 
 var services = []Service{
+	MongoDB,
 	MySQL,
 	PSQL,
 	Redis,
