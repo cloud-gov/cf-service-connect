@@ -70,6 +70,20 @@ func TestCredentialsFromJSON(t *testing.T) {
 			"user",
 			"pass",
 		},
+		{
+			`{
+				"host_name": "host.com",
+				"port": 5432,
+				"name": "name",
+				"user_name": "user",
+				"password": "pass"
+			}`,
+			"host.com",
+			"5432",
+			"name",
+			"user",
+			"pass",
+		},
 	}
 
 	for _, test := range tests {

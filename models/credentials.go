@@ -39,7 +39,9 @@ type credentialsJSON struct {
 	Pass     string `json:"pass"`
 	///////////////////////////////////////////////////
 
-	Port string `json:"port"`
+	// can be an integer or a string
+	// http://igorsobreira.com/2015/04/11/decoding-json-numbers-into-strings-in-go.html
+	Port json.Number `json:"port"`
 }
 
 func (c credentialsJSON) GetDBName() string {
@@ -80,7 +82,7 @@ func (c credentialsJSON) GetPassword() string {
 }
 
 func (c credentialsJSON) GetPort() string {
-	return c.Port
+	return c.Port.String()
 }
 
 func CredentialsFromJSON(body string) (creds Credentials, err error) {
