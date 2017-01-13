@@ -74,7 +74,7 @@ func TestCredentialsFromJSON(t *testing.T) {
 			`{
 				"host_name": "host.com",
 				"port": 5432,
-				"name": "name",
+				"dbname": "name",
 				"user_name": "user",
 				"password": "pass"
 			}`,
