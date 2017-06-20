@@ -70,7 +70,7 @@ func (c *ServiceConnectPlugin) GetMetadata() plugin.PluginMetadata {
 		Name: "ServiceConnect",
 		Version: plugin.VersionType{
 			Major: 1,
-			Minor: 0,
+			Minor: 1,
 			Build: 0,
 		},
 		MinCliVersion: plugin.VersionType{

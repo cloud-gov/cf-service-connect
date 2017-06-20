@@ -15,8 +15,6 @@ Currently supports (most) service brokers for the following:
 * PostgreSQL (requires `psql` CLI)
 * Redis (requires `redis-cli`)
 
-Doesn't run on Windows [yet](https://github.com/18F/cf-service-connect/issues/13).
-
 ## Local installation
 
 1. Install the Cloud Foundry CLI v6.15.0 or later.
