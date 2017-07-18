@@ -10,14 +10,14 @@ Requires Diego architecture with [SSH enabled](https://docs.cloudfoundry.org/run
 
 Currently supports (most) service brokers for the following:
 
-* MongoDB (requires `mongo` Shell)
-* MySQL (requires `mysql` CLI)
-* PostgreSQL (requires `psql` CLI)
-* Redis (requires `redis-cli`)
+* MongoDB (requires [`mongo` shell](https://docs.mongodb.com/getting-started/shell/installation/))
+* MySQL (requires [`mysql` CLI](https://dev.mysql.com/doc/refman/8.0/en/installing.html))
+* PostgreSQL (requires [`psql` CLI](https://postgresapp.com/documentation/cli-tools.html))
+* Redis (requires [`redis-cli`](https://redis.io/topics/quickstart))
 
 ## Local installation
 
-1. Install the Cloud Foundry CLI v6.15.0 or later.
+1. Install the [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) v6.15.0 or later.
 1. Install the plugin, using the appropriate binary URL from [the Releases page](https://github.com/18F/cf-service-connect/releases).
 
     ```sh
