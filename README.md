@@ -18,7 +18,7 @@ Currently supports (most) service brokers for the following:
 ## Local installation
 
 1. Install the [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) v6.15.0 or later.
-1. Install the plugin, using the appropriate binary URL from [the Releases page](https://github.com/18F/cf-service-connect/releases).
+1. Install this plugin, using the appropriate binary URL from [the Releases page](https://github.com/18F/cf-service-connect/releases).
 
     ```sh
     cf install-plugin <binary_url>
@@ -26,7 +26,7 @@ Currently supports (most) service brokers for the following:
     # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect.<os>
     ```
 
-1. Install CLI corresponding to the service type (see above).
+1. Install the CLI corresponding to your service type (see above).
 
 ## Usage
 
