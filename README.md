@@ -42,7 +42,7 @@ Setting up SSH tunnel...
 mysql>
 ```
 
-If you get an error like "connection refused" or "error opening SSH connection", this is usually caused by being on a network that blocks the SSH port that this tool is trying to use. Try using a different network, or consider asking your network administrator to unblock the port (typically 22 and/or 2222).
+If you get an error such as "connection refused", "error opening SSH connection", or "psql: could not connect to server: Connection refused" this is usually caused by being on a network that blocks the SSH port that this tool is trying to use. Try using a different network, or consider asking your network administrator to unblock the port (typically 22 and/or 2222).
 
 ### Manual client connection
 
