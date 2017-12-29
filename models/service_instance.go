@@ -15,7 +15,10 @@ type ServiceInstance struct {
 
 func (si *ServiceInstance) ContainsTerms(items ...string) bool {
 	for _, item := range items {
-		if strings.Contains(si.Service, item) || strings.Contains(si.Plan, item) {
+		item = strings.ToLower(item)
+		service := strings.ToLower(si.Service)
+		plan := strings.ToLower(si.Plan)
+		if strings.Contains(service, item) || strings.Contains(plan, item) {
 			return true
 		}
 	}
