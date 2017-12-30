@@ -1,6 +1,9 @@
 package models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 type serviceKeyResponse struct {
 	Resources []serviceKeyResource `json:"resources"`
@@ -17,7 +20,7 @@ type Credentials interface {
 	GetHost() string
 	GetUsername() string
 	GetPassword() string
-	GetPort() string
+	GetPort() (int, error)
 }
 
 // http://stackoverflow.com/a/28035946/358804
@@ -81,8 +84,8 @@ func (c credentialsJSON) GetPassword() string {
 	return c.Password
 }
 
-func (c credentialsJSON) GetPort() string {
-	return c.Port.String()
+func (c credentialsJSON) GetPort() (int, error) {
+	return strconv.Atoi(c.Port.String())
 }
 
 func CredentialsFromJSON(body string) (creds Credentials, err error) {

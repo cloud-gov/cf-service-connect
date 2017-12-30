@@ -20,7 +20,7 @@ const JSONWrap = `{
 type credentialsFromJSONTest struct {
 	entityJSON     string
 	expectedHost   string
-	expectedPort   string
+	expectedPort   int
 	expectedDBName string
 	expectedUser   string
 	expectedPass   string
@@ -37,7 +37,7 @@ func TestCredentialsFromJSON(t *testing.T) {
 				"password": "pass"
 			}`,
 			"host.com",
-			"5432",
+			5432,
 			"name",
 			"user",
 			"pass",
@@ -51,7 +51,7 @@ func TestCredentialsFromJSON(t *testing.T) {
 				"pass": "pass"
 			}`,
 			"host.com",
-			"5432",
+			5432,
 			"name",
 			"user",
 			"pass",
@@ -65,7 +65,7 @@ func TestCredentialsFromJSON(t *testing.T) {
 				"password": "pass"
 			}`,
 			"host.com",
-			"5432",
+			5432,
 			"name",
 			"user",
 			"pass",
@@ -79,7 +79,7 @@ func TestCredentialsFromJSON(t *testing.T) {
 				"password": "pass"
 			}`,
 			"host.com",
-			"5432",
+			5432,
 			"name",
 			"user",
 			"pass",
@@ -92,7 +92,9 @@ func TestCredentialsFromJSON(t *testing.T) {
 		assert.Nil(t, err)
 
 		assert.Equal(t, creds.GetHost(), test.expectedHost)
-		assert.Equal(t, creds.GetPort(), test.expectedPort)
+		port, err := creds.GetPort()
+		assert.NoError(t, err)
+		assert.Equal(t, port, test.expectedPort)
 		assert.Equal(t, creds.GetDBName(), test.expectedDBName)
 		assert.Equal(t, creds.GetUsername(), test.expectedUser)
 		assert.Equal(t, creds.GetPassword(), test.expectedPass)

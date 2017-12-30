@@ -105,7 +105,10 @@ func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	}
 
 	fmt.Println("Setting up SSH tunnel...")
-	tunnel := launcher.NewSSHTunnel(creds, options.AppName)
+	tunnel, err := launcher.NewSSHTunnel(creds, options.AppName)
+	if err != nil {
+		return
+	}
 	err = tunnel.Open()
 	if err != nil {
 		return

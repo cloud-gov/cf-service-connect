@@ -60,14 +60,18 @@ func (t *SSHTunnel) Close() error {
 }
 
 // NewSSHTunnel prepares the underlying Cloud Foundry CLI process for creating an SSH tunnel to a service instance.
-func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
+func NewSSHTunnel(creds models.Credentials, appName string) (SSHTunnel, error) {
 	localPort := getAvailablePort()
+	destPort, err := creds.GetPort()
+	if err != nil {
+		return SSHTunnel{}, err
+	}
 
 	cmd := execute(
 		"cf",
 		"ssh",
 		"-N",
-		"-L", fmt.Sprintf("%d:%s:%s", localPort, creds.GetHost(), creds.GetPort()),
+		"-L", fmt.Sprintf("%d:%s:%d", localPort, creds.GetHost(), destPort),
 		appName,
 	)
 	// should only print in the case of an issue
@@ -78,5 +82,5 @@ func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
 		LocalPort: localPort,
 		cmd:       cmd,
 		errChan:   make(chan error),
-	}
+	}, nil
 }
