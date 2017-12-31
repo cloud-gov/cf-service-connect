@@ -12,6 +12,7 @@ var services = []Service{
 	MySQL,
 	PSQL,
 	Redis,
+	S3,
 }
 
 func GetService(si models.ServiceInstance) (Service, bool) {

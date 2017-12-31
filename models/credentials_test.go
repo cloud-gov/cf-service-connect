@@ -84,6 +84,21 @@ func TestCredentialsFromJSON(t *testing.T) {
 			"user",
 			"pass",
 		},
+		{
+			`{
+				"access_key_id": "mykey",
+				"additional_buckets": [],
+				"bucket": "mybucket",
+				"region": "us-gov-west-1",
+				"secret_access_key": "mysecret",
+				"uri": "s3://mykey:mysecret@s3-us-gov-west-1.amazonaws.com/mybucket"
+			}`,
+			"",
+			0,
+			"mybucket",
+			"mykey",
+			"mysecret",
+		},
 	}
 
 	for _, test := range tests {
