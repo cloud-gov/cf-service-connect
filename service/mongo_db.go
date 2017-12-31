@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/18F/cf-service-connect/models"
@@ -10,6 +11,11 @@ type mongoDB struct{}
 
 func (p mongoDB) Match(si models.ServiceInstance) bool {
 	return si.ContainsTerms("mongo")
+}
+
+// https://docs.mongodb.com/manual/reference/connection-string/
+func (p mongoDB) GetConnectionUri(localPort int, creds models.Credentials) string {
+	return fmt.Sprintf("mongodb://%s:%s@localhost:%d/%s", creds.GetUsername(), creds.GetPassword(), localPort, creds.GetDBName())
 }
 
 func (p mongoDB) HasRepl() bool {

@@ -4,6 +4,7 @@ import "github.com/18F/cf-service-connect/models"
 
 type Service interface {
 	Match(si models.ServiceInstance) bool
+	GetConnectionUri(localPort int, creds models.Credentials) string
 	HasRepl() bool
 	GetLaunchCmd(localPort int, creds models.Credentials) LaunchCmd
 }

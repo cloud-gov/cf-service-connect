@@ -10,6 +10,10 @@ func (p unknownService) Match(si models.ServiceInstance) bool {
 	return true
 }
 
+func (p unknownService) GetConnectionUri(localPort int, creds models.Credentials) string {
+	return "unknown"
+}
+
 func (p unknownService) HasRepl() bool {
 	return false
 }

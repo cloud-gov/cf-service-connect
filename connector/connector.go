@@ -29,29 +29,35 @@ Name: {{.Name}}
 
 {{if .HasRepl }}To connect:
 
-    {{.LaunchCmd}}
+	{{.LaunchCmd}}
 
-{{end}}Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
+{{end}}Connection URI (note this may vary slightly by client):
+
+	{{.ConnectionUri}}
+
+Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
 `
 
 type localConnectionData struct {
-	Port      int
-	User      string
-	Pass      string
-	Name      string
-	HasRepl   bool
-	LaunchCmd service.LaunchCmd
+	Port          int
+	User          string
+	Pass          string
+	Name          string
+	HasRepl       bool
+	LaunchCmd     service.LaunchCmd
+	ConnectionUri string
 }
 
 func manualConnect(srv service.Service, tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
 	launchCmd := srv.GetLaunchCmd(tunnel.LocalPort, creds)
 	connectionData := localConnectionData{
-		Port:      tunnel.LocalPort,
-		User:      creds.GetUsername(),
-		Pass:      creds.GetPassword(),
-		Name:      creds.GetDBName(),
-		HasRepl:   srv.HasRepl(),
-		LaunchCmd: launchCmd,
+		Port:          tunnel.LocalPort,
+		User:          creds.GetUsername(),
+		Pass:          creds.GetPassword(),
+		Name:          creds.GetDBName(),
+		HasRepl:       srv.HasRepl(),
+		LaunchCmd:     launchCmd,
+		ConnectionUri: srv.GetConnectionUri(tunnel.LocalPort, creds),
 	}
 
 	tmpl, err := template.New("").Parse(manualConnectInstructions)
