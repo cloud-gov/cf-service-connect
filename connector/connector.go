@@ -27,22 +27,28 @@ Username: {{.User}}
 Password: {{.Pass}}
 Name: {{.Name}}
 
-Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
+{{if .LaunchCmd }}To connect:
+
+    {{.LaunchCmd}}
+
+{{end}}Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
 `
 
 type localConnectionData struct {
-	Port int
-	User string
-	Pass string
-	Name string
+	Port      int
+	User      string
+	Pass      string
+	Name      string
+	LaunchCmd *service.LaunchCmd
 }
 
-func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
+func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials, launchCmd *service.LaunchCmd) (err error) {
 	connectionData := localConnectionData{
-		Port: tunnel.LocalPort,
-		User: creds.GetUsername(),
-		Pass: creds.GetPassword(),
-		Name: creds.GetDBName(),
+		Port:      tunnel.LocalPort,
+		User:      creds.GetUsername(),
+		Pass:      creds.GetPassword(),
+		Name:      creds.GetDBName(),
+		LaunchCmd: launchCmd,
 	}
 
 	tmpl, err := template.New("").Parse(manualConnectInstructions)
@@ -66,18 +72,25 @@ func handleClient(
 	si models.ServiceInstance,
 	creds models.Credentials,
 ) error {
+	srv, found := service.GetService(si)
+	var cmd *service.LaunchCmd
+	if found {
+		cmdVal := srv.GetLaunchCmd(tunnel.LocalPort, creds)
+		cmd = &cmdVal
+	} else {
+		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'.\n", si.Service, si.Plan)
+	}
+
 	if options.ConnectClient {
-		srv, found := service.GetService(si)
-		if found {
+		if cmd != nil {
 			fmt.Println("Connecting client...")
-			cmd := srv.GetLaunchCmd(tunnel.LocalPort, creds)
 			return cmd.Exec()
 		}
 
-		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'. Falling back to `-no-client` behavior.\n", si.Service, si.Plan)
+		fmt.Println("Falling back to `-no-client` behavior.")
 	}
 
-	return manualConnect(tunnel, creds)
+	return manualConnect(tunnel, creds, cmd)
 }
 
 // Connect performs the primary action of the plugin: providing an SSH tunnel and launching the appropriate client, if desired.
