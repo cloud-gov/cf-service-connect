@@ -27,7 +27,7 @@ Username: {{.User}}
 Password: {{.Pass}}
 Name: {{.Name}}
 
-{{if .LaunchCmd }}To connect:
+{{if .HasRepl }}To connect:
 
     {{.LaunchCmd}}
 
@@ -39,15 +39,18 @@ type localConnectionData struct {
 	User      string
 	Pass      string
 	Name      string
-	LaunchCmd *service.LaunchCmd
+	HasRepl   bool
+	LaunchCmd service.LaunchCmd
 }
 
-func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials, launchCmd *service.LaunchCmd) (err error) {
+func manualConnect(srv service.Service, tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
+	launchCmd := srv.GetLaunchCmd(tunnel.LocalPort, creds)
 	connectionData := localConnectionData{
 		Port:      tunnel.LocalPort,
 		User:      creds.GetUsername(),
 		Pass:      creds.GetPassword(),
 		Name:      creds.GetDBName(),
+		HasRepl:   srv.HasRepl(),
 		LaunchCmd: launchCmd,
 	}
 
@@ -72,17 +75,14 @@ func handleClient(
 	si models.ServiceInstance,
 	creds models.Credentials,
 ) error {
-	srv, found := service.GetService(si)
-	var cmd *service.LaunchCmd
-	if found {
-		cmdVal := srv.GetLaunchCmd(tunnel.LocalPort, creds)
-		cmd = &cmdVal
-	} else {
+	srv := service.GetService(si)
+	if srv == service.UnknownService {
 		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'.\n", si.Service, si.Plan)
 	}
 
 	if options.ConnectClient {
-		if cmd != nil {
+		if srv.HasRepl() {
+			cmd := srv.GetLaunchCmd(tunnel.LocalPort, creds)
 			fmt.Println("Connecting client...")
 			return cmd.Exec()
 		}
@@ -90,7 +90,7 @@ func handleClient(
 		fmt.Println("Falling back to `-no-client` behavior.")
 	}
 
-	return manualConnect(tunnel, creds, cmd)
+	return manualConnect(srv, tunnel, creds)
 }
 
 // Connect performs the primary action of the plugin: providing an SSH tunnel and launching the appropriate client, if desired.

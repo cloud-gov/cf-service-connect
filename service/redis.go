@@ -12,6 +12,10 @@ func (p redis) Match(si models.ServiceInstance) bool {
 	return si.ContainsTerms("redis")
 }
 
+func (p redis) HasRepl() bool {
+	return true
+}
+
 func (p redis) GetLaunchCmd(localPort int, creds models.Credentials) LaunchCmd {
 	return LaunchCmd{
 		Cmd: "redis-cli",

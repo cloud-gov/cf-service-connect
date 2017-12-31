@@ -12,6 +12,10 @@ func (p mongoDB) Match(si models.ServiceInstance) bool {
 	return si.ContainsTerms("mongo")
 }
 
+func (p mongoDB) HasRepl() bool {
+	return true
+}
+
 func (p mongoDB) GetLaunchCmd(localPort int, creds models.Credentials) LaunchCmd {
 	return LaunchCmd{
 		Cmd: "mongo",
