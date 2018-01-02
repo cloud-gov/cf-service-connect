@@ -2,6 +2,7 @@ package connector
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"text/template"
 
@@ -37,7 +38,7 @@ type localConnectionData struct {
 	Name string
 }
 
-func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
+func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) error {
 	connectionData := localConnectionData{
 		Port: tunnel.LocalPort,
 		User: creds.GetUsername(),
@@ -47,17 +48,15 @@ func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err err
 
 	tmpl, err := template.New("").Parse(manualConnectInstructions)
 	if err != nil {
-		return
+		return err
 	}
 	err = tmpl.Execute(os.Stdout, connectionData)
 	if err != nil {
-		return
+		return err
 	}
 
 	// wait for a Control-C
-	tunnel.Wait()
-
-	return
+	return tunnel.Wait()
 }
 
 func handleClient(
@@ -80,38 +79,50 @@ func handleClient(
 }
 
 // Connect performs the primary action of the plugin: providing an SSH tunnel and launching the appropriate client, if desired.
-func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
+func Connect(cliConnection plugin.CliConnection, options Options) error {
 	fmt.Println("Finding the service instance details...")
 
 	serviceInstance, err := models.FetchServiceInstance(cliConnection, options.ServiceInstanceName)
 	if err != nil {
-		return
+		return err
 	}
 
 	serviceKey := models.NewServiceKey(serviceInstance)
 
 	// clean up existing service key, if present
-	serviceKey.Delete(cliConnection)
+	err = serviceKey.Delete(cliConnection)
+	if err != nil {
+		return err
+	}
 
 	err = serviceKey.Create(cliConnection)
 	if err != nil {
-		return
+		return err
 	}
-	defer serviceKey.Delete(cliConnection)
+	defer func() {
+		err = serviceKey.Delete(cliConnection)
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
 	creds, err := serviceKey.GetCreds(cliConnection)
 	if err != nil {
-		return
+		return err
 	}
 
 	fmt.Println("Setting up SSH tunnel...")
 	tunnel := launcher.NewSSHTunnel(creds, options.AppName)
 	err = tunnel.Open()
 	if err != nil {
-		return
+		return err
 	}
-	defer tunnel.Close()
+	defer func() {
+		err = tunnel.Close()
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
 
-	err = handleClient(options, tunnel, serviceInstance, creds)
-	return
+	return handleClient(options, tunnel, serviceInstance, creds)
 }
