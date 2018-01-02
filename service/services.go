@@ -10,6 +10,7 @@ type Service interface {
 }
 
 var services = []Service{
+	Elasticsearch,
 	MongoDB,
 	MySQL,
 	PSQL,
