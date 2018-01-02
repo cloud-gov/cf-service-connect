@@ -3,6 +3,7 @@ package connector
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"text/template"
 
 	"github.com/18F/cf-service-connect/launcher"
@@ -83,8 +84,14 @@ func handleClient(
 	if options.ConnectClient {
 		if srv.HasRepl() {
 			cmd := srv.GetLaunchCmd(tunnel.LocalPort, creds)
-			fmt.Println("Connecting client...")
-			return cmd.Exec()
+			// check whether the executable is available
+			_, err := exec.LookPath(cmd.Cmd)
+			if err == nil {
+				fmt.Println("Connecting client...")
+				return cmd.Exec()
+			} else {
+				fmt.Printf("Executable `%s` not found.\n", cmd.Cmd)
+			}
 		}
 
 		fmt.Println("Falling back to `-no-client` behavior.")
