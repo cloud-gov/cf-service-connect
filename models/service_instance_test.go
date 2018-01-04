@@ -8,12 +8,62 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type containsTermTest struct {
+	service  string
+	plan     string
+	term     string
+	contains bool
+}
+
 type fetchServiceInstanceTest struct {
 	serviceModel            plugin_models.GetService_Model
 	getServiceError         error
 	serviceName             string
 	expectedServiceInstance ServiceInstance
 	expectedError           error
+}
+
+func TestContainsTerms(t *testing.T) {
+	tests := []containsTermTest{
+		{
+			service:  "foo",
+			plan:     "bar",
+			term:     "foo",
+			contains: true,
+		},
+		{
+			service:  "foo",
+			plan:     "bar",
+			term:     "bar",
+			contains: true,
+		},
+		{
+			service:  "Foo",
+			plan:     "bar",
+			term:     "foo",
+			contains: true,
+		},
+		{
+			service:  "foo",
+			plan:     "Bar",
+			term:     "bar",
+			contains: true,
+		},
+		{
+			service:  "foo",
+			plan:     "bar",
+			term:     "baz",
+			contains: false,
+		},
+	}
+
+	for _, test := range tests {
+		si := ServiceInstance{
+			Service: test.service,
+			Plan:    test.plan,
+		}
+		assert.Equal(t, si.ContainsTerms(test.term), test.contains)
+	}
 }
 
 func TestFetchServiceInstance(t *testing.T) {
