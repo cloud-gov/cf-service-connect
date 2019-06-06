@@ -1,0 +1,10 @@
+code.cloudfoundry.org/cli v6.45.0+incompatible h1:on2OEKZU6LVXCvqdoPtLAjPtQNxY5u42zgSHPpjGrlY=
+code.cloudfoundry.org/cli v6.45.0+incompatible/go.mod h1:e4d+EpbwevNhyTZKybrLlyTvpH+W22vMsmdmcTxs/Fo=
+github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
+github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/phayes/freeport v0.0.0-20141201041908-e7681b376149 h1:nU4ri+KRaSg4fOlRbGqaEHZ6tU84ZnrjHCqqq0em+VQ=
+github.com/phayes/freeport v0.0.0-20141201041908-e7681b376149/go.mod h1:iIss55rKnNBTvrwdmkUpLnDpZoAHvWaiq5+iMmen4AE=
+github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
+github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+github.com/stretchr/testify v0.0.0-20160504130155-6cb3b85ef5a0 h1:aCHp55cT6UsXkzGy9PoE+pNlDIbLIwcqK35xEnAKWfw=
+github.com/stretchr/testify v0.0.0-20160504130155-6cb3b85ef5a0/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
