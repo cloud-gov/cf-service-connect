@@ -25,7 +25,6 @@ Currently supports (most) service brokers for the following:
     # will be of the format
     # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect.<os>
     # For OSX use cf-service-connect-darwin-xxx
-
     ```
 
 3. Install the CLI corresponding to your service type (see above).
