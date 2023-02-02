@@ -18,15 +18,16 @@ Currently supports (most) service brokers for the following:
 ## Local installation
 
 1. Install the [Cloud Foundry CLI](https://docs.cloudfoundry.org/cf-cli/install-go-cli.html) v6.15.0 or later.
-1. Install this plugin, using the appropriate binary URL from [the Releases page](https://github.com/18F/cf-service-connect/releases).
+2. Install this plugin, using the appropriate binary URL from [the Releases page](https://github.com/18F/cf-service-connect/releases).
 
     ```sh
     cf install-plugin <binary_url>
     # will be of the format
     # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect.<os>
+    # For OSX use cf-service-connect-darwin-xxx
     ```
 
-1. Install the CLI corresponding to your service type (see above).
+3. Install the CLI corresponding to your service type (see above).
 
 ## Usage
 
