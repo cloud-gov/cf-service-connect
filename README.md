@@ -32,7 +32,7 @@ Currently supports (most) service brokers for the following:
 ## Usage
 
 > **Note**
-> If you are using this tool to connect to a service on cloud.gov, your space must be configured with `restricted-egress`. Do this by running `cf bind-security-group trusted_local_networks_egress ORG --space SPACE` with your organization and space.
+> If you are using this tool to connect to a service on cloud.gov, your space must be configured with `restricted-egress`. Do this by running `cf bind-security-group trusted_local_networks_egress ORG --space SPACE` with your organization and space. Skipping this step will result in a `connection refused` error. For more, see [cloud.gov: Controlling egress traffic](https://cloud.gov/docs/management/space-egress/).
 
 * `app_name` is the name of the app in your space you want to tunnel through.
 * `service_instance_name` is the service instance you wish to connect to.
