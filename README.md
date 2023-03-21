@@ -1,4 +1,4 @@
-# Cloud Foundry CLI Service Connection Plugin [![CircleCI](https://circleci.com/gh/18F/cf-service-connect.svg?style=svg)](https://circleci.com/gh/18F/cf-service-connect) [![Code Climate](https://codeclimate.com/github/18F/cf-service-connect/badges/gpa.svg)](https://codeclimate.com/github/18F/cf-service-connect)
+# Cloud Foundry CLI Service Connection Plugin [![Code Climate](https://codeclimate.com/github/18F/cf-service-connect/badges/gpa.svg)](https://codeclimate.com/github/18F/cf-service-connect)
 
 This plugin makes it easy to connect to your databases or other Cloud Foundry service instances from your local machine. This condenses the steps listed in [Accessing Services with SSH](https://docs.cloudfoundry.org/devguide/deploy-apps/ssh-services.html) to a single command.
 
