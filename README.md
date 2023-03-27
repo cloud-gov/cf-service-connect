@@ -1,4 +1,4 @@
-# Cloud Foundry CLI Service Connection Plugin [![CircleCI](https://circleci.com/gh/18F/cf-service-connect.svg?style=svg)](https://circleci.com/gh/18F/cf-service-connect) [![Code Climate](https://codeclimate.com/github/18F/cf-service-connect/badges/gpa.svg)](https://codeclimate.com/github/18F/cf-service-connect)
+# Cloud Foundry CLI Service Connection Plugin [![Code Climate](https://codeclimate.com/github/18F/cf-service-connect/badges/gpa.svg)](https://codeclimate.com/github/18F/cf-service-connect)
 
 This plugin makes it easy to connect to your databases or other Cloud Foundry service instances from your local machine. This condenses the steps listed in [Accessing Services with SSH](https://docs.cloudfoundry.org/devguide/deploy-apps/ssh-services.html) to a single command.
 
@@ -30,6 +30,9 @@ Currently supports (most) service brokers for the following:
 3. Install the CLI corresponding to your service type (see above).
 
 ## Usage
+
+> **Note**
+> If you are using this tool to connect to a service on cloud.gov, your space must be configured with the `trusted_local_networks_egress` security group. Do this by running `cf bind-security-group trusted_local_networks_egress ORG --space SPACE` with your organization and space. Skipping this step will result in a `connection refused` error. For more, see [cloud.gov: Controlling egress traffic](https://cloud.gov/docs/management/space-egress/).
 
 * `app_name` is the name of the app in your space you want to tunnel through.
 * `service_instance_name` is the service instance you wish to connect to.
