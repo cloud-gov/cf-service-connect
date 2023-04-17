@@ -3,6 +3,7 @@ package connector
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"text/template"
 
 	"github.com/18F/cf-service-connect/launcher"
@@ -27,22 +28,31 @@ Username: {{.User}}
 Password: {{.Pass}}
 Name: {{.Name}}
 
-Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
+{{if .HasRepl }}To connect:
+
+    {{.LaunchCmd}}
+
+{{end}}Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
 `
 
 type localConnectionData struct {
-	Port int
-	User string
-	Pass string
-	Name string
+	Port      int
+	User      string
+	Pass      string
+	Name      string
+	HasRepl   bool
+	LaunchCmd service.LaunchCmd
 }
 
-func manualConnect(tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
+func manualConnect(srv service.Service, tunnel launcher.SSHTunnel, creds models.Credentials) (err error) {
+	launchCmd := srv.GetLaunchCmd(tunnel.LocalPort, creds)
 	connectionData := localConnectionData{
-		Port: tunnel.LocalPort,
-		User: creds.GetUsername(),
-		Pass: creds.GetPassword(),
-		Name: creds.GetDBName(),
+		Port:      tunnel.LocalPort,
+		User:      creds.GetUsername(),
+		Pass:      creds.GetPassword(),
+		Name:      creds.GetDBName(),
+		HasRepl:   srv.HasRepl(),
+		LaunchCmd: launchCmd,
 	}
 
 	tmpl, err := template.New("").Parse(manualConnectInstructions)
@@ -66,17 +76,28 @@ func handleClient(
 	si models.ServiceInstance,
 	creds models.Credentials,
 ) error {
-	if options.ConnectClient {
-		srv, found := service.GetService(si)
-		if found {
-			fmt.Println("Connecting client...")
-			return srv.Launch(tunnel.LocalPort, creds)
-		}
-
-		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'. Falling back to `-no-client` behavior.\n", si.Service, si.Plan)
+	srv := service.GetService(si)
+	if srv == service.UnknownService {
+		fmt.Printf("Unable to find matching client for service '%s' with plan '%s'.\n", si.Service, si.Plan)
 	}
 
-	return manualConnect(tunnel, creds)
+	if options.ConnectClient {
+		if srv.HasRepl() {
+			cmd := srv.GetLaunchCmd(tunnel.LocalPort, creds)
+			// check whether the executable is available
+			_, err := exec.LookPath(cmd.Cmd)
+			if err == nil {
+				fmt.Println("Connecting client...")
+				return cmd.Exec()
+			} else {
+				fmt.Printf("Executable `%s` not found.\n", cmd.Cmd)
+			}
+		}
+
+		fmt.Println("Falling back to `-no-client` behavior.")
+	}
+
+	return manualConnect(srv, tunnel, creds)
 }
 
 // Connect performs the primary action of the plugin: providing an SSH tunnel and launching the appropriate client, if desired.

@@ -10,10 +10,14 @@ Requires Diego architecture with [SSH enabled](https://docs.cloudfoundry.org/run
 
 Currently supports (most) service brokers for the following:
 
-* MongoDB (requires [`mongo` shell](https://docs.mongodb.com/getting-started/shell/installation/))
-* MySQL (requires [`mysql` CLI](https://dev.mysql.com/doc/refman/8.0/en/installing.html))
-* PostgreSQL (requires [`psql` CLI](https://postgresapp.com/documentation/cli-tools.html))
-* Redis (requires [`redis-cli`](https://redis.io/topics/quickstart))
+Service | REPL
+--- | ---
+MongoDB | [`mongo` shell](https://docs.mongodb.com/getting-started/shell/installation/)
+MySQL | [`mysql` CLI](https://dev.mysql.com/doc/refman/8.0/en/installing.html)
+PostgreSQL | [`psql` CLI](https://postgresapp.com/documentation/cli-tools.html)
+Redis | [`redis-cli`](https://redis.io/topics/quickstart)
+
+If the corresponding REPL is installed on your system, the REPL will be started and connected to your service. Otherwise, connection instructions will be printed out.
 
 ## Local installation
 

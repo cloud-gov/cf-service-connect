@@ -10,7 +10,6 @@ import (
 type getServiceTest struct {
 	serviceName   string
 	planName      string
-	expectFound   bool
 	expectService Service
 }
 
@@ -19,20 +18,17 @@ func TestGetService(t *testing.T) {
 		{
 			"psql",
 			"shared",
-			true,
 			PSQL,
 		},
 		{
 			"mysql",
 			"shared",
-			true,
 			MySQL,
 		},
 		{
 			"other",
 			"service",
-			false,
-			nil,
+			UnknownService,
 		},
 	}
 
@@ -41,11 +37,8 @@ func TestGetService(t *testing.T) {
 			Service: test.serviceName,
 			Plan:    test.planName,
 		}
-		srv, found := GetService(serviceInstance)
-		assert.Equal(t, found, test.expectFound)
-		if test.expectFound {
-			assert.Equal(t, srv, test.expectService)
-		}
+		srv := GetService(serviceInstance)
+		assert.Equal(t, srv, test.expectService)
 	}
 
 }
