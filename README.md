@@ -10,6 +10,7 @@ Requires Diego architecture with [SSH enabled](https://docs.cloudfoundry.org/run
 
 Currently supports (most) service brokers for the following:
 
+* Elasticsearch
 * MongoDB (requires [`mongo` shell](https://docs.mongodb.com/getting-started/shell/installation/))
 * MySQL (requires [`mysql` CLI](https://dev.mysql.com/doc/refman/8.0/en/installing.html))
 * PostgreSQL (requires [`psql` CLI](https://postgresapp.com/documentation/cli-tools.html))
