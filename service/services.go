@@ -4,7 +4,8 @@ import "github.com/18F/cf-service-connect/models"
 
 type Service interface {
 	Match(si models.ServiceInstance) bool
-	Launch(localPort int, creds models.Credentials) error
+	HasRepl() bool
+	GetLaunchCmd(localPort int, creds models.Credentials) LaunchCmd
 }
 
 var services = []Service{
@@ -14,12 +15,12 @@ var services = []Service{
 	Redis,
 }
 
-func GetService(si models.ServiceInstance) (Service, bool) {
+func GetService(si models.ServiceInstance) Service {
 	for _, potentialService := range services {
 		if potentialService.Match(si) {
-			return potentialService, true
+			return potentialService
 		}
 	}
 
-	return nil, false
+	return UnknownService
 }
