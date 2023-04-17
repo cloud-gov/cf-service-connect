@@ -2,10 +2,7 @@ package service
 
 import (
 	"fmt"
-	"os"
 
-	"github.com/18F/cf-service-connect/launcher"
-	"github.com/18F/cf-service-connect/logger"
 	"github.com/18F/cf-service-connect/models"
 )
 
@@ -15,16 +12,23 @@ func (p pSQL) Match(si models.ServiceInstance) bool {
 	return si.ContainsTerms("psql", "postgres")
 }
 
-func (p pSQL) Launch(localPort int, creds models.Credentials) error {
-	os.Setenv("PGPASSWORD", creds.GetPassword())
-	logger.Debugf("PGPASSWORD=%s ", creds.GetPassword())
+// https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING
+func (p pSQL) GetConnectionUri(localPort int, creds models.Credentials) string {
+	return fmt.Sprintf("postgresql://%s:%s@localhost:%d/%s", creds.GetUsername(), creds.GetPassword(), localPort, creds.GetDBName())
+}
 
-	return launcher.StartShell("psql", []string{
-		"-h", "localhost",
-		"-p", fmt.Sprintf("%d", localPort),
-		creds.GetDBName(),
-		creds.GetUsername(),
-	})
+func (p pSQL) HasRepl() bool {
+	return true
+}
+
+func (p pSQL) GetLaunchCmd(localPort int, creds models.Credentials) LaunchCmd {
+	return LaunchCmd{
+		Cmd: "psql",
+		Args: []string{
+			// http://www.starkandwayne.com/blog/using-a-postgres-uri-with-psql/
+			p.GetConnectionUri(localPort, creds),
+		},
+	}
 }
 
 // PSQL is the service singleton.
