@@ -25,6 +25,7 @@ Currently supports (most) service brokers for the following:
     # will be of the format
     # https://github.com/cloud-gov/cf-service-connect/releases/download/<version>/cf-service-connect_<os>-<arch>
     # For non-M1 Macs, use `cf-service-connect_darwin_amd64`
+    # For M1 Macs, use `cf-service-connect_darwin_arm64`
     ```
 
 3. Install the CLI corresponding to your service type (see above).
