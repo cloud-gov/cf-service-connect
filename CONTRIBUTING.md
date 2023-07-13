@@ -1,4 +1,6 @@
-## Welcome!
+# CONTRIBUTING
+
+## Welcome
 
 We're so glad you're thinking about contributing to an 18F open source project! If you're unsure about anything, just ask -- or submit the issue or pull request anyway. The worst that can happen is you'll be politely asked to change something. We love all friendly contributions.
 
@@ -31,6 +33,6 @@ This will (re)install then run the plugin, all in one.
 ### Releasing
 
 1. Update `Version` in [`main.go`](main.go).
-1. Follow the [compilation instructions](https://github.com/cloudfoundry-incubator/cli-plugin-repo#cross-compile-to-the-3-different-operating-systems).
+1. Run `bin/create-release-binaries.sh` to [create cross-compiled binaries](https://github.com/cloudfoundry-incubator/cli-plugin-repo#cross-compile-to-the-3-different-operating-systems).
 1. Commit, tag, and push via Git.
 1. Upload the binaries to [the new Release](https://github.com/18F/cf-service-connect/releases).
