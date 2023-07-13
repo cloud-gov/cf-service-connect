@@ -14,10 +14,15 @@ func (p redis) Match(si models.ServiceInstance) bool {
 }
 
 func (p redis) Launch(localPort int, creds models.Credentials) error {
-	return launcher.StartShell("redis-cli", []string{
+	return launcher.StartShell("redis-cli", getRedisLaunchFlags(localPort, creds))
+}
+
+func getRedisLaunchFlags(localPort int, creds models.Credentials) []string {
+	return []string{
+		"--tls",
 		"-p", strconv.Itoa(localPort),
 		"-a", creds.GetPassword(),
-	})
+	}
 }
 
 // Redis is the service singleton.
