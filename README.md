@@ -23,8 +23,8 @@ Currently supports (most) service brokers for the following:
     ```sh
     cf install-plugin <binary_url>
     # will be of the format
-    # https://github.com/18F/cf-service-connect/releases/download/<version>/cf-service-connect.<os>
-    # For OSX use cf-service-connect-darwin-xxx
+    # https://github.com/cloud-gov/cf-service-connect/releases/download/<version>/cf-service-connect_<os>-<arch>
+    # For non-M1 Macs, use `cf-service-connect_darwin_amd64`
     ```
 
 3. Install the CLI corresponding to your service type (see above).
@@ -37,7 +37,7 @@ Currently supports (most) service brokers for the following:
 * `app_name` is the name of the app in your space you want to tunnel through.
 * `service_instance_name` is the service instance you wish to connect to.
 
-```
+```shell
 $ cf target --organization <org> --space <space>
 $ cf connect-to-service <app_name> <service_instance_name>
 Finding the service instance details...
@@ -51,3 +51,7 @@ If you get an error such as "connection refused", "error opening SSH connection"
 ### Manual client connection
 
 If you're using a non-default client (such as a GUI), run with the `-no-client` option to set up your client connection on your own.
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md)
