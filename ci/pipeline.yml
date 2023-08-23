@@ -20,6 +20,7 @@ jobs:
   plan:
     - get: cf-service-connect-repo
       passed: [run-tests]
+      trigger: true
     - task: release
       file: cf-service-connect-repo/ci/create-release.yml
   on_failure:
