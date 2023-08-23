@@ -51,7 +51,7 @@ resources:
     branch: allow-cf-binary-name-override
     # private_key: ((cg-ci-bot-sshkey.private_key))
     # only run on new tags matching pattern like: v0.1.5
-    tag_regex: '^v([0-9]+\.){0,2}(\*|[0-9]+)$'
+    # tag_regex: '^v([0-9]+\.){0,2}(\*|[0-9]+)$'
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 # This resource for posting to slack
