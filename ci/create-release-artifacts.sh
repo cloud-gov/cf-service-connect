@@ -2,4 +2,4 @@
 
 cd cf-service-connect-repo || exit
 
-go build
+./bin/create-release-binaries.sh

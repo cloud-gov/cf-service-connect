@@ -21,8 +21,8 @@ jobs:
     - get: cf-service-connect-repo
       passed: [run-tests]
       trigger: true
-    - task: release
-      file: cf-service-connect-repo/ci/create-release.yml
+    - task: create-release-artifacts
+      file: cf-service-connect-repo/ci/create-release-artifacts.yml
   on_failure:
     put: slack
     params:
@@ -50,7 +50,6 @@ resources:
   source:
     uri: https://github.com/cloud-gov/cf-service-connect.git
     branch: allow-cf-binary-name-override
-    # private_key: ((cg-ci-bot-sshkey.private_key))
     # only run on new tags matching pattern like: v0.1.5
     # tag_regex: '^v([0-9]+\.){0,2}(\*|[0-9]+)$'
     commit_verification_keys: ((cloud-gov-pgp-keys))
@@ -61,8 +60,22 @@ resources:
   source:
     url: ((slack-webhook-url))
 
+# Resource for creating a new release
+- name: cf-service-connect-release
+  type: github-release
+  source:
+    owner: cloud-gov
+    repository: cf-service-connect
+    access_token: ((cg-ci-bot-ghtoken))
+
 resource_types:
+
 - name: slack-notification
   type: docker-image
   source:
     repository: cfcommunity/slack-notification-resource
+
+- name: github-release
+  type: registry-image
+  source:
+    repository: concourse/github-release-resource
