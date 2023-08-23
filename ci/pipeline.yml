@@ -61,12 +61,12 @@ resources:
     url: ((slack-webhook-url))
 
 # Resource for creating a new release
-- name: cf-service-connect-release
-  type: github-release
-  source:
-    owner: cloud-gov
-    repository: cf-service-connect
-    access_token: ((cg-ci-bot-ghtoken))
+# - name: cf-service-connect-release
+#   type: github-release
+#   source:
+#     owner: cloud-gov
+#     repository: cf-service-connect
+#     access_token: ((cg-ci-bot-ghtoken))
 
 resource_types:
 
