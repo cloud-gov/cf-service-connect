@@ -9,6 +9,8 @@ SUBCOMMAND=connect-to-service
 # http://stackoverflow.com/a/1371283/358804
 BIN=${PWD##*/}
 
+go test ./...
+
 go build
 
 # reinstall
