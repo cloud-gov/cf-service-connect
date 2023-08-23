@@ -23,6 +23,12 @@ jobs:
       trigger: true
     - task: create-release-artifacts
       file: cf-service-connect-repo/ci/create-release-artifacts.yml
+    # - put: cf-service-connect-release
+    #   params:
+    #     name: src/.git/ref
+    #     tag: src/.git/ref
+    #     globs:
+    #       - cf-service-connect-repo/cf-service-connect_*
   on_failure:
     put: slack
     params:
