@@ -63,8 +63,13 @@ func (t *SSHTunnel) Close() error {
 func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
 	localPort := getAvailablePort()
 
+	cfBinaryName, exists := os.LookupEnv("CF_BINARY_NAME")
+	if !exists {
+		cfBinaryName = "cf"
+	}
+
 	cmd := execute(
-		"cf",
+		cfBinaryName,
 		"ssh",
 		"-N",
 		"-L", fmt.Sprintf("%d:%s:%s", localPort, creds.GetHost(), creds.GetPort()),
