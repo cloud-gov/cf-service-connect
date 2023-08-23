@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cd cf-service-connect-repo || exit
+
 TAG=$(git describe --tags)
 echo "$TAG" > tag
 
