@@ -27,7 +27,7 @@ jobs:
     put: slack
     params:
         text: |
-            :x: FAILED to release cf-service-connect-repo
+            :x: FAILED to release cf-service-connect
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: ((slack-failure-channel))
         username: ((slack-username))
@@ -36,7 +36,7 @@ jobs:
     put: slack
     params:
         text: |
-            :white_check_mark: Successfully released cf-service-connect-repo
+            :white_check_mark: Successfully released cf-service-connect
             <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: ((slack-success-channel))
         username: ((slack-username))

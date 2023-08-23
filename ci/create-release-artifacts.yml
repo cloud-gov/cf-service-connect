@@ -14,4 +14,4 @@ inputs:
 - name: cf-service-connect-repo
 
 run:
-  path: cf-service-connect-repo/ci/create-release.sh
+  path: cf-service-connect-repo/ci/create-release-artifacts.sh
