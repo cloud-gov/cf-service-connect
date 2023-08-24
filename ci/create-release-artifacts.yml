@@ -13,5 +13,8 @@ image_resource:
 inputs:
 - name: cf-service-connect-repo
 
+outputs:
+- name: cf-service-connect-repo
+
 run:
   path: cf-service-connect-repo/ci/create-release-artifacts.sh
