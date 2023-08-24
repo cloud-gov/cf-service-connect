@@ -56,9 +56,8 @@ resources:
   type: git
   source:
     uri: https://github.com/cloud-gov/cf-service-connect.git
-    branch: allow-cf-binary-name-override
     # only run on new tags matching pattern like: v0.1.5
-    # tag_regex: '^v([0-9]+\.){0,2}(\*|[0-9]+)$'
+    tag_regex: '^v([0-9]+\.){0,2}(\*|[0-9]+)$'
     commit_verification_keys: ((cloud-gov-pgp-keys))
 
 # This resource for posting to slack
