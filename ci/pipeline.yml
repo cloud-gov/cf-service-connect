@@ -21,8 +21,6 @@ jobs:
     - get: cf-service-connect-repo
       passed: [run-tests]
       trigger: true
-    - task: create-release-artifacts
-      file: cf-service-connect-repo/ci/create-release-artifacts.yml
     - task: prepare-release
       file: cf-service-connect-repo/ci/prepare-release.yml
     # - put: cf-service-connect-release

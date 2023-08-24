@@ -17,4 +17,5 @@ outputs:
 - name: cf-service-connect-repo
 
 run:
-  path: cf-service-connect-repo/ci/prepare-release.sh
+  dir: cf-service-connect-repo
+  path: ci/prepare-release.sh

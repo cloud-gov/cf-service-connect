@@ -14,4 +14,5 @@ inputs:
 - name: cf-service-connect-repo
 
 run:
-  path: cf-service-connect-repo/ci/run-tests.sh
+  dir: cf-service-connect-repo
+  path: ci/run-tests.sh
