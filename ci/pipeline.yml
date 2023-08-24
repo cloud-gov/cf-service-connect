@@ -23,13 +23,13 @@ jobs:
       trigger: true
     - task: prepare-release
       file: cf-service-connect-repo/ci/prepare-release.yml
-    # - put: cf-service-connect-release
-    #   params:
-    #     name: cf-service-connect-repo/tag
-    #     tag: cf-service-connect-repo/tag
-    #     body: cf-service-connect-repo/releaselog.md
-    #     globs:
-    #       - cf-service-connect-repo/cf-service-connect_*
+    - put: cf-service-connect-release
+      params:
+        name: cf-service-connect-repo/tag
+        tag: cf-service-connect-repo/tag
+        generate_release_notes: true
+        globs:
+          - cf-service-connect-repo/cf-service-connect_*
   on_failure:
     put: slack
     params:
@@ -67,12 +67,12 @@ resources:
     url: ((slack-webhook-url))
 
 # Resource for creating a new release
-# - name: cf-service-connect-release
-#   type: github-release
-#   source:
-#     owner: cloud-gov
-#     repository: cf-service-connect
-#     access_token: ((cg-ci-bot-ghtoken))
+- name: cf-service-connect-release
+  type: github-release
+  source:
+    owner: cloud-gov
+    repository: cf-service-connect
+    access_token: ((cg-ci-bot-ghtoken))
 
 resource_types:
 

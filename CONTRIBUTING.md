@@ -33,6 +33,8 @@ This will (re)install then run the plugin, all in one.
 ### Releasing
 
 1. Update `Version` in [`main.go`](main.go).
-1. Run `bin/create-release-binaries.sh` to [create cross-compiled binaries](https://github.com/cloudfoundry-incubator/cli-plugin-repo#cross-compile-to-the-3-different-operating-systems).
 1. Commit, tag, and push via Git.
-1. Upload the binaries to [the new Release](https://github.com/18F/cf-service-connect/releases).
+1. The `cf-service-connect` Concourse pipeline should then detect the new tag and automatically:
+  
+    - Test the changes
+    - Create a new GitHub release including the generated release binaries (see [bin/create-release-binaries.sh](./bin/create-release-binaries.sh))
