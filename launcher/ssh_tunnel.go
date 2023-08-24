@@ -64,7 +64,7 @@ func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
 	localPort := getAvailablePort()
 
 	cmd := execute(
-		"cf",
+		getCFBinaryName(),
 		"ssh",
 		"-N",
 		"-L", fmt.Sprintf("%d:%s:%s", localPort, creds.GetHost(), creds.GetPort()),
@@ -79,4 +79,12 @@ func NewSSHTunnel(creds models.Credentials, appName string) SSHTunnel {
 		cmd:       cmd,
 		errChan:   make(chan error),
 	}
+}
+
+func getCFBinaryName() string {
+	cfBinaryName, exists := os.LookupEnv("CF_BINARY_NAME")
+	if !exists {
+		cfBinaryName = "cf"
+	}
+	return cfBinaryName
 }

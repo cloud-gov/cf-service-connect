@@ -49,6 +49,14 @@ mysql>
 
 If you get an error such as "connection refused", "error opening SSH connection", or "psql: could not connect to server: Connection refused" this is usually caused by being on a network that blocks the SSH port that this tool is trying to use. Try using a different network, or consider asking your network administrator to unblock the port (typically 22 and/or 2222).
 
+### Note for Windows
+
+If you are in Windows or another environment where the Cloud Foundry CLI was installed as `cf7` or `cf8`, you can set an environment to tell the plugin what binary name to use for the Cloud Foundry CLI:
+
+```shell
+CF_BINARY_NAME=cf7 cf connect-to-service <app_name> <service_instance_name>
+```
+
 ### Manual client connection
 
 If you're using a non-default client (such as a GUI), run with the `-no-client` option to set up your client connection on your own.
