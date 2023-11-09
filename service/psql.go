@@ -16,7 +16,10 @@ func (p pSQL) Match(si models.ServiceInstance) bool {
 }
 
 func (p pSQL) Launch(localPort int, creds models.Credentials) error {
-	os.Setenv("PGPASSWORD", creds.GetPassword())
+	err := os.Setenv("PGPASSWORD", creds.GetPassword())
+	if err != nil {
+		return err
+	}
 	logger.Debugf("PGPASSWORD=%s ", creds.GetPassword())
 
 	return launcher.StartShell("psql", []string{

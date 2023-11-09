@@ -86,12 +86,12 @@ func (c credentialsJSON) GetPort() string {
 }
 
 func CredentialsFromJSON(body string) (creds Credentials, err error) {
-	serviceKeyResponse := serviceKeyResponse{}
-	err = json.Unmarshal([]byte(body), &serviceKeyResponse)
+	response := serviceKeyResponse{}
+	err = json.Unmarshal([]byte(body), &response)
 	if err != nil {
 		return
 	}
-	creds = serviceKeyResponse.Resources[0].Entity.Credentials
+	creds = response.Resources[0].Entity.Credentials
 
 	return
 }
