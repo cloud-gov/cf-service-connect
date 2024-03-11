@@ -57,6 +57,12 @@ If you are in Windows or another environment where the Cloud Foundry CLI was ins
 CF_BINARY_NAME=cf7 cf connect-to-service <app_name> <service_instance_name>
 ```
 
+Or in PowerShell:
+```
+$env:CF_BINARY_NAME = "cf7";
+cf7 connect-to-service <app_name> <service_instance_name>
+```
+
 ### Manual client connection
 
 If you're using a non-default client (such as a GUI), run with the `-no-client` option to set up your client connection on your own.
