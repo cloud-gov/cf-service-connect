@@ -1,87 +1,98 @@
 ---
 jobs:
+  - name: set-self
+    plan:
+      - get: cf-service-connect-repo
+        trigger: true
+      - set_pipeline: self
+        file: cf-service-connect-repo/ci/pipeline.yml
 
-- name: set-self
-  plan:
-    - get: cf-service-connect-repo
-      trigger: true
-    - set_pipeline: self
-      file: cf-service-connect-repo/ci/pipeline.yml
+  - name: run-tests
+    plan:
+      - get: cf-service-connect-repo
+        passed: [set-self]
+        trigger: true
+      - task: run-tests
+        file: cf-service-connect-repo/ci/run-tests.yml
 
-- name: run-tests
-  plan:
-    - get: cf-service-connect-repo
-      passed: [set-self]
-      trigger: true
-    - task: run-tests
-      file: cf-service-connect-repo/ci/run-tests.yml
-
-- name: create-release
-  plan:
-    - get: cf-service-connect-repo
-      passed: [run-tests]
-      trigger: true
-    - task: prepare-release
-      file: cf-service-connect-repo/ci/prepare-release.yml
-    - put: cf-service-connect-release
+  - name: create-release
+    plan:
+      - get: cf-service-connect-repo
+        passed: [run-tests]
+        trigger: true
+      - task: prepare-release
+        file: cf-service-connect-repo/ci/prepare-release.yml
+      - put: cf-service-connect-release
+        params:
+          name: cf-service-connect-repo/tag
+          tag: cf-service-connect-repo/tag
+          generate_release_notes: true
+          globs:
+            - cf-service-connect-repo/cf-service-connect_*
+    on_failure:
+      put: slack
       params:
-        name: cf-service-connect-repo/tag
-        tag: cf-service-connect-repo/tag
-        generate_release_notes: true
-        globs:
-          - cf-service-connect-repo/cf-service-connect_*
-  on_failure:
-    put: slack
-    params:
         text: |
-            :x: FAILED to release cf-service-connect
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          :x: FAILED to release cf-service-connect
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: ((slack-failure-channel))
         username: ((slack-username))
         icon_url: ((slack-icon-url))
-  on_success:
-    put: slack
-    params:
+    on_success:
+      put: slack
+      params:
         text: |
-            :white_check_mark: Successfully released cf-service-connect
-            <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
+          :white_check_mark: Successfully released cf-service-connect
+          <$ATC_EXTERNAL_URL/teams/$BUILD_TEAM_NAME/pipelines/$BUILD_PIPELINE_NAME/jobs/$BUILD_JOB_NAME/builds/$BUILD_NAME|View build details>
         channel: ((slack-success-channel))
         username: ((slack-username))
         icon_url: ((slack-icon-url))
 
 resources:
-# this resource is this repo
-# NOTE: we only execute on tag changes not commits, see tag_regex
-- name: cf-service-connect-repo
-  type: git
-  source:
-    uri: https://github.com/cloud-gov/cf-service-connect.git
-    # only run on new tags matching pattern like: v0.1.5
-    tag_regex: '^v([0-9]+\.){0,2}(\*|[0-9]+)$'
-    commit_verification_keys: ((cloud-gov-pgp-keys))
+  # this resource is this repo
+  # NOTE: we only execute on tag changes not commits, see tag_regex
+  - name: cf-service-connect-repo
+    type: git
+    source:
+      uri: https://github.com/cloud-gov/cf-service-connect.git
+      # only run on new tags matching pattern like: v0.1.5
+      tag_regex: '^v([0-9]+\.){0,2}(\*|[0-9]+)$'
+      commit_verification_keys: ((cloud-gov-pgp-keys))
 
-# This resource for posting to slack
-- name: slack
-  type: slack-notification
-  source:
-    url: ((slack-webhook-url))
+  # This resource for posting to slack
+  - name: slack
+    type: slack-notification
+    source:
+      url: ((slack-webhook-url))
 
-# Resource for creating a new release
-- name: cf-service-connect-release
-  type: github-release
-  source:
-    owner: cloud-gov
-    repository: cf-service-connect
-    access_token: ((cg-ci-bot-ghtoken))
+  # Resource for creating a new release
+  - name: cf-service-connect-release
+    type: github-release
+    source:
+      owner: cloud-gov
+      repository: cf-service-connect
+      access_token: ((cg-ci-bot-ghtoken))
 
 resource_types:
+  - name: registry-image
+    type: registry-image
+    source:
+      aws_access_key_id: ((ecr_aws_key))
+      aws_secret_access_key: ((ecr_aws_secret))
+      repository: registry-image-resource
+      aws_region: us-gov-west-1
+      tag: latest
 
 - name: slack-notification
-  type: docker-image
-  source:
-    repository: cfcommunity/slack-notification-resource
-
-- name: github-release
   type: registry-image
   source:
-    repository: concourse/github-release-resource
+    aws_access_key_id: ((ecr_aws_key))
+    aws_secret_access_key: ((ecr_aws_secret))
+    repository: slack-notification-resource
+    aws_region: us-gov-west-1
+    tag: latest
+
+  - name: github-release
+    type: registry-image
+    source:
+      repository: concourse/github-release-resource
