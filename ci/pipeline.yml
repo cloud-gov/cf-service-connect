@@ -28,8 +28,9 @@ jobs:
         file: cf-service-connect-repo/ci/prepare-release.yml
       - put: cf-service-connect-release
         params:
-          name: cf-service-connect-repo/tag
-          tag: cf-service-connect-repo/tag
+          name: cf-service-connect-repo/.git/ref
+          tag: cf-service-connect-repo/.git/ref
+          commitish: cf-service-connect-repo/.git/HEAD
           generate_release_notes: true
           globs:
             - cf-service-connect-repo/cf-service-connect_*
