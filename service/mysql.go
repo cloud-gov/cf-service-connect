@@ -3,8 +3,8 @@ package service
 import (
 	"strconv"
 
-	"github.com/18F/cf-service-connect/launcher"
-	"github.com/18F/cf-service-connect/models"
+	"github.com/cloud-gov/cf-service-connect/launcher"
+	"github.com/cloud-gov/cf-service-connect/models"
 )
 
 type mySQL struct{}

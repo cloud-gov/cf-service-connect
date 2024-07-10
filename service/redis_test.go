@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/18F/cf-service-connect/models"
+	"github.com/cloud-gov/cf-service-connect/models"
 	"github.com/stretchr/testify/assert"
 )
 
