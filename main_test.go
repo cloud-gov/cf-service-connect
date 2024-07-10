@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/18F/cf-service-connect/connector"
+	"github.com/cloud-gov/cf-service-connect/connector"
 	"github.com/stretchr/testify/assert"
 )
 

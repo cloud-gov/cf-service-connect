@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/18F/cf-service-connect/connector"
+	"github.com/cloud-gov/cf-service-connect/connector"
 
 	"code.cloudfoundry.org/cli/plugin"
 )
@@ -71,7 +71,7 @@ func (c *ServiceConnectPlugin) GetMetadata() plugin.PluginMetadata {
 		Version: plugin.VersionType{
 			Major: 1,
 			Minor: 1,
-			Build: 3,
+			Build: 4,
 		},
 		MinCliVersion: plugin.VersionType{
 			Major: 6,

@@ -7,7 +7,7 @@ import (
 	"os/exec"
 	"time"
 
-	"github.com/18F/cf-service-connect/models"
+	"github.com/cloud-gov/cf-service-connect/models"
 	"github.com/phayes/freeport"
 )
 
