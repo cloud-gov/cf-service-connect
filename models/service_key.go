@@ -23,6 +23,7 @@ func (sk *ServiceKey) Delete(conn plugin.CliConnection) error {
 	return err
 }
 
+// FIXME
 func (sk *ServiceKey) GetCreds(cliConnection plugin.CliConnection) (creds Credentials, err error) {
 	serviceKeyAPI := fmt.Sprintf("/v2/service_instances/%s/service_keys?q=name%%3A%s", sk.Instance.GUID, url.QueryEscape(sk.ID))
 	bodyLines, err := cliConnection.CliCommandWithoutTerminalOutput("curl", serviceKeyAPI)

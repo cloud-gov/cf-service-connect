@@ -3,11 +3,14 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
 	"log"
 
 	"github.com/cloud-gov/cf-service-connect/connector"
 
 	"code.cloudfoundry.org/cli/plugin"
+	cf_client "github.com/cloudfoundry/go-cfclient/v3/client"
+	cf_client_config "github.com/cloudfoundry/go-cfclient/v3/config"
 )
 
 const subcommand = "connect-to-service"
@@ -53,15 +56,50 @@ func (c *ServiceConnectPlugin) Run(cliConnection plugin.CliConnection, args []st
 		return
 	}
 
+	hasApiEndpoint, err := cliConnection.HasAPIEndpoint()
+	if err != nil || !hasApiEndpoint {
+		err = fmt.Errorf("no API endpoint set")
+		return
+	}
+
+	loggedIn, err := cliConnection.IsLoggedIn()
+	if err != nil {
+		return
+	}
+	if !loggedIn {
+		err = fmt.Errorf("please log in to search for apps")
+		return
+	}
+
+	cfc, err := createCfClient()
+	if err != nil {
+		return
+	}
+
 	opts, err := c.parseOptions(args)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	// connect has plugin.CliConnection already instantiated in c.Run.
 	err = connector.Connect(cliConnection, opts)
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func createCfClient() (*cf_client.Client, error) {
+	cfg, err := cf_client_config.NewFromCFHome()
+	if err != nil {
+		return &cf_client.Client{}, err
+	}
+
+	cfc, err := cf_client.New(cfg)
+	if err != nil {
+		return &cf_client.Client{}, err
+	}
+
+	return cfc, nil
 }
 
 // GetMetadata returns the plugin information for the CLI to consume.
@@ -70,8 +108,8 @@ func (c *ServiceConnectPlugin) GetMetadata() plugin.PluginMetadata {
 		Name: "ServiceConnect",
 		Version: plugin.VersionType{
 			Major: 1,
-			Minor: 1,
-			Build: 4,
+			Minor: 9,
+			Build: 9,
 		},
 		MinCliVersion: plugin.VersionType{
 			Major: 6,
