@@ -58,6 +58,7 @@ func (c *ServiceConnectPlugin) Run(cliConnection plugin.CliConnection, args []st
 		log.Fatalln(err)
 	}
 
+	// connect has plugin.CliConnection already instantiated in c.Run.
 	err = connector.Connect(cliConnection, opts)
 	if err != nil {
 		log.Fatalln(err)
@@ -70,8 +71,8 @@ func (c *ServiceConnectPlugin) GetMetadata() plugin.PluginMetadata {
 		Name: "ServiceConnect",
 		Version: plugin.VersionType{
 			Major: 1,
-			Minor: 1,
-			Build: 4,
+			Minor: 9,
+			Build: 9,
 		},
 		MinCliVersion: plugin.VersionType{
 			Major: 6,

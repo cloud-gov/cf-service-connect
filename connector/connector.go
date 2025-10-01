@@ -5,6 +5,7 @@ import (
 	"os"
 	"text/template"
 
+	"github.com/cloud-gov/cf-service-connect/api"
 	"github.com/cloud-gov/cf-service-connect/launcher"
 	"github.com/cloud-gov/cf-service-connect/models"
 	"github.com/cloud-gov/cf-service-connect/service"
@@ -82,6 +83,18 @@ func handleClient(
 // Connect performs the primary action of the plugin: providing an SSH tunnel and launching the appropriate client, if desired.
 func Connect(cliConnection plugin.CliConnection, options Options) (err error) {
 	fmt.Println("Finding the service instance details...")
+
+	cfclient, err := api.NewCFClient(cliConnection)
+	if err != nil {
+		return err
+	}
+
+	err = cfclient.Configure(options.AppName)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Found cfclient endpoint: %s\n", cfclient.CCAPIEndpoint)
 
 	serviceInstance, err := models.FetchServiceInstance(cliConnection, options.ServiceInstanceName)
 	if err != nil {
