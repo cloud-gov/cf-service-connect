@@ -1,14 +1,14 @@
 module github.com/cloud-gov/cf-service-connect
 
-go 1.25.0
+go 1.26.0
 
 require (
 	code.cloudfoundry.org/cli v7.1.0+incompatible
 	github.com/cloudfoundry/go-cfclient/v3 v3.0.0-beta.1
 	github.com/phayes/freeport v0.0.0-20220201140144-74d24b5ae9f5
 	github.com/stretchr/testify v1.11.1
-	golang.org/x/crypto v0.52.0
-	golang.org/x/net v0.54.0
+	golang.org/x/crypto v0.57.0
+	golang.org/x/net v0.58.0
 )
 
 require (
@@ -21,6 +21,6 @@ require (
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sys v0.45.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
