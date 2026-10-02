@@ -27,6 +27,7 @@ type credentialsTest struct {
 	expectedDBName string
 	expectedUser   string
 	expectedPass   string
+	expectedUri    string
 }
 
 // The broker field names below are all in active use; the plugin has to accept
@@ -40,13 +41,15 @@ func credentialsTests() []credentialsTest {
 				"port": "5432",
 				"db_name": "name",
 				"username": "user",
-				"password": "pass"
+				"password": "pass",
+				"uri": "uri"
 			}`,
 			expectedHost:   "host.com",
 			expectedPort:   "5432",
 			expectedDBName: "name",
 			expectedUser:   "user",
 			expectedPass:   "pass",
+			expectedUri:    "uri",
 		},
 		{
 			name: "hostname/name/user/pass",
@@ -184,4 +187,26 @@ func TestCredentialsFromMapRejectsAWrongFieldType(t *testing.T) {
 
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "could not parse")
+}
+
+func TestCredentialsIsPostgresDabase(t *testing.T) {
+	creds, err := CredentialsFromMap(credentialsMap(t, `
+	{
+		"host": "host",
+		"port": "5432",
+		"uri":"postgres://username:password@host:port/db"
+	}
+`))
+	assert.Nil(t, err)
+	assert.True(t, creds.IsPostgresDatabase())
+
+	creds, err = CredentialsFromMap(credentialsMap(t, `
+	{
+		"host": "host",
+		"port": "3306",
+		"uri":"mysql://username:password@host:port/db"
+	}
+`))
+	assert.Nil(t, err)
+	assert.False(t, creds.IsPostgresDatabase())
 }

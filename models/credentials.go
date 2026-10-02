@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 )
 
 // Credentials exposes the connection details of a service instance.
@@ -13,6 +14,7 @@ type Credentials interface {
 	GetUsername() string
 	GetPassword() string
 	GetPort() string
+	IsPostgresDatabase() bool
 }
 
 // credentialsJSON accommodates the differing field names that service brokers
@@ -36,6 +38,8 @@ type credentialsJSON struct {
 	Password string `json:"password"`
 	Pass     string `json:"pass"`
 	///////////////////////////////////////////////////
+
+	Uri string `json:"uri"`
 
 	// can be an integer or a string
 	// http://igorsobreira.com/2015/04/11/decoding-json-numbers-into-strings-in-go.html
@@ -81,6 +85,10 @@ func (c credentialsJSON) GetPassword() string {
 
 func (c credentialsJSON) GetPort() string {
 	return c.Port.String()
+}
+
+func (c credentialsJSON) IsPostgresDatabase() bool {
+	return strings.HasPrefix(c.Uri, "postgres")
 }
 
 // CredentialsFromMap converts the credentials object returned by
