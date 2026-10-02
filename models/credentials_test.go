@@ -188,3 +188,25 @@ func TestCredentialsFromMapRejectsAWrongFieldType(t *testing.T) {
 	require.Error(t, err)
 	assert.Contains(t, err.Error(), "could not parse")
 }
+
+func TestCredentialsIsPostgresDabase(t *testing.T) {
+	creds, err := CredentialsFromMap(credentialsMap(t, `
+	{
+		"host": "host",
+		"port": "5432",
+		"uri":"postgres://username:password@host:port/db"
+	}
+`))
+	assert.Nil(t, err)
+	assert.True(t, creds.IsPostgresDatabase())
+
+	creds, err = CredentialsFromMap(credentialsMap(t, `
+	{
+		"host": "host",
+		"port": "3306",
+		"uri":"mysql://username:password@host:port/db"
+	}
+`))
+	assert.Nil(t, err)
+	assert.False(t, creds.IsPostgresDatabase())
+}
