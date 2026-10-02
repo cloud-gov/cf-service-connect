@@ -39,6 +39,10 @@ func (m mockCredentials) GetPort() string {
 	return ""
 }
 
+func (m mockCredentials) IsPostgresDatabase() bool {
+	return false
+}
+
 func TestRedisMatch(t *testing.T) {
 	tests := []redisMatchTest{
 		{
