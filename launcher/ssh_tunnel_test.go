@@ -157,15 +157,17 @@ func echoServer(t *testing.T) (host, port string) {
 
 // stubCredentials satisfies models.Credentials for the host/port the tunnel needs.
 type stubCredentials struct {
-	host string
-	port string
+	host               string
+	port               string
+	isPostgresDatabase bool
 }
 
-func (s stubCredentials) GetDBName() string   { return "testdb" }
-func (s stubCredentials) GetHost() string     { return s.host }
-func (s stubCredentials) GetUsername() string { return "testuser" }
-func (s stubCredentials) GetPassword() string { return "testpass" }
-func (s stubCredentials) GetPort() string     { return s.port }
+func (s stubCredentials) GetDBName() string        { return "testdb" }
+func (s stubCredentials) GetHost() string          { return s.host }
+func (s stubCredentials) GetUsername() string      { return "testuser" }
+func (s stubCredentials) GetPassword() string      { return "testpass" }
+func (s stubCredentials) GetPort() string          { return s.port }
+func (s stubCredentials) IsPostgresDatabase() bool { return s.isPostgresDatabase }
 
 func TestSSHTunnelForwardsTraffic(t *testing.T) {
 	server := newForwardingSSHServer(t)
