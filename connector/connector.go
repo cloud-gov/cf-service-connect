@@ -44,15 +44,34 @@ Port: {{.Port}}
 Username: {{.User}}
 Password: {{.Pass}}
 Name: {{.Name}}
-
-Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.
 `
+
+const disconnectInstructions = `
+Leave this terminal open while you want to use the SSH tunnel. Press Control-C to stop.`
 
 type localConnectionData struct {
 	Port int
 	User string
 	Pass string
 	Name string
+}
+
+func getConnectionInstructions(creds models.Credentials) string {
+	instructions := manualConnectInstructions
+	if creds.IsPostgresDatabase() {
+		pgConnectionEnvVars := `
+You can set these environment variables to connect to your PostgreSQL database:
+
+export PGHOST=localhost
+export PGPORT={{.Port}}
+export PGUSER="{{.User}}"
+export PGPASSWORD="{{.Pass}}"
+export PGDATABASE="{{.Name}}"
+`
+		instructions = instructions + pgConnectionEnvVars
+	}
+	instructions = instructions + disconnectInstructions
+	return instructions
 }
 
 func manualConnect(tunnel *launcher.SSHTunnel, creds models.Credentials) error {
@@ -63,7 +82,8 @@ func manualConnect(tunnel *launcher.SSHTunnel, creds models.Credentials) error {
 		Name: creds.GetDBName(),
 	}
 
-	tmpl, err := template.New("").Parse(manualConnectInstructions)
+	instructions := getConnectionInstructions(creds)
+	tmpl, err := template.New("").Parse(instructions)
 	if err != nil {
 		return err
 	}
