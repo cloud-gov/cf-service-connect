@@ -9,7 +9,7 @@ import "fmt"
 const (
 	Major = 2
 	Minor = 0
-	Build = 0
+	Build = 1
 )
 
 // String renders the version as "major.minor.build".
