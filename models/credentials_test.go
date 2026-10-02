@@ -27,6 +27,7 @@ type credentialsTest struct {
 	expectedDBName string
 	expectedUser   string
 	expectedPass   string
+	expectedUri    string
 }
 
 // The broker field names below are all in active use; the plugin has to accept
@@ -40,13 +41,15 @@ func credentialsTests() []credentialsTest {
 				"port": "5432",
 				"db_name": "name",
 				"username": "user",
-				"password": "pass"
+				"password": "pass",
+				"uri": "uri"
 			}`,
 			expectedHost:   "host.com",
 			expectedPort:   "5432",
 			expectedDBName: "name",
 			expectedUser:   "user",
 			expectedPass:   "pass",
+			expectedUri:    "uri",
 		},
 		{
 			name: "hostname/name/user/pass",
